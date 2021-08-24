@@ -22,7 +22,7 @@ from .accounts import *
 @fixture
 def deploy_impl_v0(admin: Account) -> FlexUSDImplV0:
   '''
-  Deploy and Initiate Implementation Logic Contract with totalSupply of 0.
+  Deploy and Inititialize Implementation Logic Contract with totalSupply of 0.
   '''
   print(f'{ BLUE }Event: FlexUSD Implementation Logic V0 Deployment{ NFMT }')
   ### Deploy ###
@@ -32,6 +32,18 @@ def deploy_impl_v0(admin: Account) -> FlexUSDImplV0:
   flex_usd.initialize(total_supply, {'from': admin})
   return flex_usd
 
+@fixture
+def deploy_impl_clone(admin: Account) -> FlexUSDImplV0:
+  '''
+  Deploy and Initialize Cloned Implementation Logic Contract with totalSupply of 0.
+  '''
+  print(f'{ BLUE }Event: FlexUSD Implementation Logic V0 Deployment{ NFMT }')
+  ### Deploy ###
+  flex_usd: FlexUSDImplV0 = FlexUSDImplV0.deploy({'from': admin})
+  total_supply: int       = Wei('0 ether').to('wei')
+  ### Initialize ###
+  flex_usd.initialize(total_supply, {'from': admin})
+  return flex_usd
 @fixture
 def deploy_flexusd(admin: Account, deploy_impl_v0: FlexUSDImplV0) -> FlexUSD:
   print(f'{ BLUE }Event: FlexUSD Deployment{ NFMT }')
