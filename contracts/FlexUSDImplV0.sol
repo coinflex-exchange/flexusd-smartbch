@@ -72,16 +72,16 @@ contract FlexUSDImplV0 is Context, FlexUSDStorage, LibraryLock, IERC20
   function allowance(address owner, address spender)
     public virtual override view returns (uint256)
   {
-    uint256 internalAmt;
+    uint256 externalAmt;
     uint256 maxapproval = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     maxapproval = maxapproval.div(multiplier).mul(deci);
     if (_allowances[owner][spender] > maxapproval)
     {
-      internalAmt = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+      externalAmt = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     } else {
-      internalAmt = (_allowances[owner][spender]).mul(multiplier).div(deci);
+      externalAmt = (_allowances[owner][spender]).mul(multiplier).div(deci);
     }
-    return internalAmt;
+    return externalAmt;
   }
 
   function approve(address spender, uint256 amount)
