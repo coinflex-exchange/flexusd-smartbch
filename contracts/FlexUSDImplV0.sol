@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import './Context.sol';
-import './FlexUSDStorage.sol';
+import './flexUSDStorage.sol';
 import './LibraryLock.sol';
 import './SafeMath.sol';
 import '../interfaces/IERC20.sol';
 
-contract FlexUSDImplV0 is Context, FlexUSDStorage, LibraryLock, IERC20
+contract flexUSDImplV0 is Context, flexUSDStorage, LibraryLock, IERC20
 {
   using SafeMath for uint256;
   /**

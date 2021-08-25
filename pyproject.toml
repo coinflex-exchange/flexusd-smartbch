@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "flex-usd"
 version = "0.1.0"
-description = "Token testbed and deployment for FlexUSD meant to be deployed on smartBCH"
+description = "Token testbed and deployment for flexUSD meant to be deployed on smartBCH"
 authors = ["Sitt Guruvanich <sitt@coinflex.com>"]
 license = "MIT"
 

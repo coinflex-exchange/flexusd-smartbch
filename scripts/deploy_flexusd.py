@@ -9,7 +9,7 @@
 #
 # HISTORY:
 #*************************************************************
-from brownie import accounts, network, FlexUSD, FlexUSDImplV0, Wei
+from brownie import accounts, network, flexUSD, flexUSDImplV0, Wei
 from eth_account.account import ValidationError
 from yaml import safe_load
 
@@ -68,10 +68,10 @@ def main():
   gas_price = gas_station['standard']
 
   ### Deployments ###
-  limit                  = FlexUSDImplV0.deploy.estimate_gas({ 'from': acct }) * gas_price
-  impl_v0: FlexUSDImplV0 = FlexUSDImplV0.deploy({ 'from': acct, 'gas_limit': limit })
-  print(f'FlexUSDImplV0: { impl_v0 }')
+  limit                  = flexUSDImplV0.deploy.estimate_gas({ 'from': acct }) * gas_price
+  impl_v0: flexUSDImplV0 = flexUSDImplV0.deploy({ 'from': acct, 'gas_limit': limit })
+  print(f'flexUSDImplV0: { impl_v0 }')
 
-  limit                  = FlexUSD.deploy.estimate_gas(impl_v0.address, b'', { 'from': acct }) * gas_price
-  flex_usd: FlexUSD      = FlexUSD.deploy(impl_v0.address, b'', { 'from': acct, 'gas_limit': limit })
-  print(f'FlexUSD: { flex_usd }')
+  limit                  = flexUSD.deploy.estimate_gas(impl_v0.address, b'', { 'from': acct }) * gas_price
+  flex_usd: flexUSD      = flexUSD.deploy(impl_v0.address, b'', { 'from': acct, 'gas_limit': limit })
+  print(f'flexUSD: { flex_usd }')

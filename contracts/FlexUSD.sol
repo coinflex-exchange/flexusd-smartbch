@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 
 import './Address.sol';
-import './FlexUSDStorage.sol';
+import './flexUSDStorage.sol';
 
-contract FlexUSD is FlexUSDStorage {
+contract flexUSD is flexUSDStorage {
   /**
    * Implementation Address
    */
@@ -35,9 +35,9 @@ contract FlexUSD is FlexUSDStorage {
   function _upgradeTo(address _logic)
     internal
   {
-    require(_logic != address(0), 'FlexUSD: new implementation cannot be zero address.');
-    require(Address.isContract(_logic), 'FlexUSD: new implementation is not a contract.');
-    require(_implementation != _logic, 'FlexUSD: new implementation cannot be the same address.');
+    require(_logic != address(0), 'flexUSD: new implementation cannot be zero address.');
+    require(Address.isContract(_logic), 'flexUSD: new implementation is not a contract.');
+    require(_implementation != _logic, 'flexUSD: new implementation cannot be the same address.');
     _implementation = _logic;
     emit Upgraded(_implementation);
   }

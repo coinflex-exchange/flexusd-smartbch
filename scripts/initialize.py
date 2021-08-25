@@ -9,7 +9,7 @@
 #
 # HISTORY:
 #*************************************************************
-from brownie import accounts, network, FlexUSDImplV0, Wei
+from brownie import accounts, network, flexUSDImplV0, Wei
 from brownie.exceptions import ContractExists
 from brownie.network.contract import ProjectContract
 from brownie.project.main import get_loaded_projects, Project
@@ -72,12 +72,12 @@ def main(target: str, total_supply: int):
 
   ### Initialize ###
   total_supply_wei = Wei(f'{total_supply} ether').to('wei')
-  flex_impl: FlexUSDImplV0
+  flex_impl: flexUSDImplV0
   try:
-    flex_impl = FlexUSDImplV0.at(target)
+    flex_impl = flexUSDImplV0.at(target)
   except ContractExists:
     project: Project = get_loaded_projects()[0]
-    build: dict      = { 'abi': FlexUSDImplV0.abi, 'contractName': 'FlexUSDImplV0' }
+    build: dict      = { 'abi': flexUSDImplV0.abi, 'contractName': 'flexUSDImplV0' }
     flex_impl        = ProjectContract(project, build=build, address=target)
 
   limit = flex_impl.initialize.estimate_gas(total_supply_wei, { 'from': acct }) * gas_price

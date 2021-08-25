@@ -1,8 +1,8 @@
-# FlexUSD (SmartBCH)
+# flexUSD (SmartBCH)
 
 ## Description
 
-^0.8.0 Solidity compatible proxiable FlexUSD sourcecode, testing and compatibility focused.
+^0.8.0 Solidity compatible proxiable flexUSD source-code, testing and compatibility focused.
 
 ## Getting Started
 

@@ -6,7 +6,7 @@ import './Ownable.sol';
 /**
  * Storage Abstract Contract, do not change
  */
-abstract contract FlexUSDStorage is Ownable {
+abstract contract flexUSDStorage is Ownable {
   /**
    * Member Variable(s)
    */

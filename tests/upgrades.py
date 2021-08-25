@@ -12,6 +12,7 @@
 ### Standard Packages ###
 from typing import List
 ### Third-Party Packages ###
+from brownie import flexUSD, flexUSDImplV0
 from brownie.network.account import Account
 from brownie.exceptions import VirtualMachineError
 ### Local Modules ###
@@ -19,7 +20,7 @@ from . import *
 from .accounts import *
 from .deployments import *
 
-def test_upgrade_to_zero(admin: Account, deploy_flexusd: FlexUSD):
+def test_upgrade_to_zero(admin: Account, deploy_flexusd: flexUSD):
   print('Test: Try upgrading to EOA')
   ### Prepare Parameters ###
   target: str = '0x0000000000000000000000000000000000000000'
@@ -27,16 +28,16 @@ def test_upgrade_to_zero(admin: Account, deploy_flexusd: FlexUSD):
   ### Upgrade ###
   reverted: bool    = False
   reverted_msg: str = ''
-  flex_usd: FlexUSD = deploy_flexusd
+  flex_usd: flexUSD = deploy_flexusd
   try:
     flex_usd.upgrade(target, data, {'from': admin})
   except VirtualMachineError as err:
     reverted     = True
     reverted_msg = err.message
   assert reverted == True
-  assert reverted_msg == 'VM Exception while processing transaction: revert FlexUSD: new implementation cannot be zero address'
+  assert reverted_msg == 'VM Exception while processing transaction: revert flexUSD: new implementation cannot be zero address'
 
-def test_upgrade_to_eoa(admin: Account, user_accounts: List[Account], deploy_flexusd: FlexUSD):
+def test_upgrade_to_eoa(admin: Account, user_accounts: List[Account], deploy_flexusd: flexUSD):
   print('Test: Try upgrading to EOA')
   ### Prepare Parameters ###
   target: str = user_accounts[0].address
@@ -44,16 +45,16 @@ def test_upgrade_to_eoa(admin: Account, user_accounts: List[Account], deploy_fle
   ### Upgrade ###
   reverted: bool    = False
   reverted_msg: str = ''
-  flex_usd: FlexUSD = deploy_flexusd
+  flex_usd: flexUSD = deploy_flexusd
   try:
     flex_usd.upgrade(target, data, {'from': admin})
   except VirtualMachineError as err:
     reverted     = True
     reverted_msg = err.message
   assert reverted == True
-  assert reverted_msg == 'VM Exception while processing transaction: revert FlexUSD: new implementation is not a contract'
+  assert reverted_msg == 'VM Exception while processing transaction: revert flexUSD: new implementation is not a contract'
 
-def test_upgrade_to_same_impl(admin: Account, deploy_flexusd: FlexUSD, deploy_impl_v0: FlexUSDImplV0):
+def test_upgrade_to_same_impl(admin: Account, deploy_flexusd: flexUSD, deploy_impl_v0: flexUSDImplV0):
   print('Test: Try upgrading to same implementation address')
   ### Prepare Parameters ###
   target: str = deploy_impl_v0.address
@@ -61,16 +62,16 @@ def test_upgrade_to_same_impl(admin: Account, deploy_flexusd: FlexUSD, deploy_im
   ### Upgrade ###
   reverted: bool    = False
   reverted_msg: str = ''
-  flex_usd: FlexUSD = deploy_flexusd
+  flex_usd: flexUSD = deploy_flexusd
   try:
     flex_usd.upgrade(target, data, {'from': admin})
   except VirtualMachineError as err:
     reverted     = True
     reverted_msg = err.message
   assert reverted == True
-  assert reverted_msg == 'VM Exception while processing transaction: revert FlexUSD: new implementation cannot be the same address'
+  assert reverted_msg == 'VM Exception while processing transaction: revert flexUSD: new implementation cannot be the same address'
 
-def test_upgrade_from_non_owner(user_accounts: List[Account], deploy_flexusd: FlexUSD, deploy_impl_clone: FlexUSDImplV0):
+def test_upgrade_from_non_owner(user_accounts: List[Account], deploy_flexusd: flexUSD, deploy_impl_clone: flexUSDImplV0):
   print('Test: Upgrading from a Non-Owner Account')
   ### Prepare Parameters ###
   target: str = deploy_impl_clone.address
@@ -78,7 +79,7 @@ def test_upgrade_from_non_owner(user_accounts: List[Account], deploy_flexusd: Fl
   ### Upgrade ###
   reverted: bool    = False
   reverted_msg: str = ''
-  flex_usd: FlexUSD = deploy_flexusd
+  flex_usd: flexUSD = deploy_flexusd
   try:
     flex_usd.upgrade(target, data, {'from': user_accounts[0]})
   except VirtualMachineError as err:
@@ -87,14 +88,14 @@ def test_upgrade_from_non_owner(user_accounts: List[Account], deploy_flexusd: Fl
   assert reverted == True
   assert reverted_msg == 'VM Exception while processing transaction: revert Ownable: caller is not the owner'
 
-def test_upgrade_successful(admin: Account, deploy_flexusd: FlexUSD, deploy_impl_clone: FlexUSDImplV0):
+def test_upgrade_successful(admin: Account, deploy_flexusd: flexUSD, deploy_impl_clone: flexUSDImplV0):
   print('Test: Upgrading Successfully')
   ### Prepare Parameters ###
   target: str = deploy_impl_clone.address
   data: bytes = b''
   ### Upgrade ###
   reverted: bool    = False
-  flex_usd: FlexUSD = deploy_flexusd
+  flex_usd: flexUSD = deploy_flexusd
   try:
     flex_usd.upgrade(target, data, {'from': admin})
   except VirtualMachineError as err:

@@ -405,12 +405,12 @@ abstract contract Ownable is Context {
   }
 }
 
-// Part: FlexUSDStorage
+// Part: flexUSDStorage
 
 /**
  * Storage Abstract Contract, do not change
  */
-abstract contract FlexUSDStorage is Ownable {
+abstract contract flexUSDStorage is Ownable {
   /**
    * Member Variable(s)
    */
@@ -430,7 +430,7 @@ abstract contract FlexUSDStorage is Ownable {
 
 // Part: LibraryLock
 
-contract LibraryLock is FlexUSDStorage {
+contract LibraryLock is flexUSDStorage {
   // Ensures no one can manipulate the Logic Contract once it is deployed.
   // PARITY WALLET HACK PREVENTION
 
@@ -447,9 +447,9 @@ contract LibraryLock is FlexUSDStorage {
   }
 }
 
-// File: FlexUSDImplV0.sol
+// File: flexUSDImplV0.sol
 
-contract FlexUSDImplV0 is Context, FlexUSDStorage, LibraryLock, IERC20
+contract flexUSDImplV0 is Context, flexUSDStorage, LibraryLock, IERC20
 {
   using SafeMath for uint256;
   /**
@@ -514,16 +514,16 @@ contract FlexUSDImplV0 is Context, FlexUSDStorage, LibraryLock, IERC20
   function allowance(address owner, address spender)
     public virtual override view returns (uint256)
   {
-    uint256 internalAmt;
+    uint256 externalAmt;
     uint256 maxapproval = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     maxapproval = maxapproval.div(multiplier).mul(deci);
     if (_allowances[owner][spender] > maxapproval)
     {
-      internalAmt = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+      externalAmt = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     } else {
-      internalAmt = (_allowances[owner][spender]).mul(multiplier).div(deci);
+      externalAmt = (_allowances[owner][spender]).mul(multiplier).div(deci);
     }
-    return internalAmt;
+    return externalAmt;
   }
 
   function approve(address spender, uint256 amount)
