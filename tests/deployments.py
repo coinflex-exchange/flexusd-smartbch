@@ -71,3 +71,13 @@ def wrap_flexusd_v0(admin: Account, deploy_flexusd: flexUSD) -> flexUSDImplV0:
   total_supply: int  = Wei('1000000 ether').to('wei')
   flex_impl.initialize(total_supply, {'from': admin})
   return flex_impl
+
+def test_deployments(deploy_impl_v0: flexUSDImplV0, wrap_flexusd_v0: flexUSDImplV0):
+  print(f'{ BLUE }Deployment Test #1: Deploy Implementation Logic and then flexUSD.{ NFMT }')
+  impl_v0: flexUSDImplV0  = deploy_impl_v0
+  flex_usd: flexUSDImplV0 = wrap_flexusd_v0
+  ### Display Shared Logic and Separate Storage ###
+  print(f'Implementation V0: { impl_v0 } (totalSupply={ impl_v0.totalSupply() }, admin={ impl_v0.owner() })')
+  print(f'flexUSD: { flex_usd } (totalSupply={ flex_usd.totalSupply()}, admin={ flex_usd.owner() })')
+  assert impl_v0.totalSupply() != flex_usd.totalSupply() # Storage is not shared, logic is;
+  assert impl_v0.owner()       == flex_usd.owner()       # Initialized by the same key

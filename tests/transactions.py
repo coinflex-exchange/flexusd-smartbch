@@ -10,36 +10,20 @@
 # HISTORY:
 #*************************************************************
 ### Standard Packages ###
+from decimal import Decimal
 from typing import List
 ### Third-Party Packages ###
 from brownie import flexUSD, flexUSDImplV0
+from brownie.exceptions import VirtualMachineError
 from brownie.network.account import Account
+from brownie.network.transaction import TransactionReceipt
 ### Local Modules ###
 from . import *
 from .accounts import *
 from .deployments import *
 
-def test_show_accounts(admin: Account, user_accounts: List[Account]):
-  print(f'{ BLUE }Test #1 Show accounts and assure Accounts have funds.{ NFMT }')
-  starting_fund: int = Wei('100 ether').to('wei')
-  assert admin.balance() == starting_fund
-  print(f'Admin: { admin } { GREEN }(balance={ admin.balance() }){ NFMT }')
-  for i, user_account in enumerate(user_accounts):
-    assert user_account.balance() == starting_fund
-    print(f'User #{i + 1}: { user_account } { GREEN }(balance={ user_account.balance() }){ NFMT }')
-
-def test_deployments(deploy_impl_v0: flexUSDImplV0, wrap_flexusd_v0: flexUSDImplV0):
-  print(f'{ BLUE }Test #2 Deploy Implementation Logic and then flexUSD.{ NFMT }')
-  impl_v0: flexUSDImplV0  = deploy_impl_v0
-  flex_usd: flexUSDImplV0 = wrap_flexusd_v0
-  ### Display Shared Logic and Separate Storage ###
-  print(f'Implementation V0: { impl_v0 } (totalSupply={ impl_v0.totalSupply() }, admin={ impl_v0.owner() })')
-  print(f'flexUSD: { flex_usd } (totalSupply={ flex_usd.totalSupply()}, admin={ flex_usd.owner() })')
-  assert impl_v0.totalSupply() != flex_usd.totalSupply() # Storage is not shared, logic is;
-  assert impl_v0.owner()       == flex_usd.owner()       # Initialized by the same key
-
 def test_transfer_to_users(admin: Account, user_accounts: List[Account], wrap_flexusd_v0: flexUSDImplV0):
-  print(f'{ BLUE }Test #3 Distribute 100 each to user accounts.{ NFMT }')
+  print(f'{ BLUE }Trasaction Test #1: Distribute 100 each to user accounts.{ NFMT }')
   amount: int = 100
   flex_usd: flexUSDImplV0 = wrap_flexusd_v0
   for i, user_account in enumerate(user_accounts):
@@ -53,3 +37,41 @@ def test_transfer_to_users(admin: Account, user_accounts: List[Account], wrap_fl
   spent: int     = len(user_accounts) * amount
   spent_wei: int = Wei(f'{spent} ether').to('wei')
   assert flex_usd.balanceOf(admin) == (flex_usd.totalSupply() - spent_wei)
+
+def test_transfer_while_broke(user_accounts: List[Account], wrap_flexusd_v0: flexUSDImplV0):
+  print(f'{ BLUE }Transaction Test #2: Test create failed transaction because balance insufficient.{ NFMT }')
+  amount: int             = 100
+  amount_wei: Decimal     = Wei(f'{amount} ether').to('wei')
+  flex_usd: flexUSDImplV0 = wrap_flexusd_v0
+  test_acct: Account      = user_accounts[0]
+  target_acct: Account    = user_accounts[1]
+  revert: bool            = False
+  revert_msg: str
+  try:
+    flex_usd.transfer(target_acct, amount_wei, { 'from': test_acct })
+  except VirtualMachineError as err:
+    revert = True
+    revert_msg = err.message
+  assert revert     == True
+  print(revert_msg)
+  assert revert_msg == 'VM Exception while processing transaction: revert ERC20: transfer internalAmt exceeds balance'
+
+def test_transfer_hot_potato(admin: Account, user_accounts: List[Account], wrap_flexusd_v0: flexUSDImplV0):
+  print(f'{ BLUE }Transaction Test #3: Pass the same amount around list of user accounts.{ NFMT }')
+  amount: int             = 100
+  amount_wei: Decimal     = Wei(f'{amount} ether').to('wei')
+  flex_usd: flexUSDImplV0 = wrap_flexusd_v0
+  ### First Transfer from Admin ###
+  txn: TransactionReceipt = flex_usd.transfer(user_accounts[0], amount_wei, { 'from': admin })
+  print(f'<Transaction (amount={amount}, txid={txn.txid[:15]}..., from={admin.address[:15]}..., to={user_accounts[0].address[:15]}...)>')
+  assert flex_usd.balanceOf(user_accounts[0]) == amount_wei
+  count: int = len(user_accounts)
+  ### Pass the Hot Potato ###
+  for i in range(count):
+    if i >= count - 1: break
+    from_addr: str = user_accounts[i]
+    to_addr: str   = user_accounts[i+1]
+    txn = flex_usd.transfer(to_addr, amount_wei, { 'from': from_addr })
+    print(f'<Transaction (amount={amount}, txid={txn.txid[:15]}..., from={from_addr.address[:15]}..., to={to_addr.address[:15]}...)>')
+    assert flex_usd.balanceOf(from_addr) == 0
+    assert flex_usd.balanceOf(to_addr)   == amount_wei
