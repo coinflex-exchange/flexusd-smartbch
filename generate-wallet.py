@@ -20,7 +20,7 @@ def main():
   parser = ArgumentParser()
   parser.add_argument('num', type=int, nargs='?', default=12, help='Word Number')
   parser.add_argument('--filename', '-fn', default='wallet', help='Filename (.yml) to save mnemonic')
-  parser.add_argument('--force', '-f', action='store_true', help='Force override ganache.yml if exists')
+  parser.add_argument('--force', '-f', action='store_true', help='Force override writing [filename].yml if file exists')
   args = parser.parse_args()
   yaml_exists = False
   try:
