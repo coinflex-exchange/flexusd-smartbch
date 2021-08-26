@@ -11,14 +11,13 @@
 #*************************************************************
 ### Standard Packages ###
 from typing import List
-### Third-Party Packages ###
+### Project Contracts ###
 from brownie import flexUSD, flexUSDImplV0
+### Third-Party Packages ###
 from brownie.network.account import Account
 from brownie.exceptions import VirtualMachineError
 ### Local Modules ###
 from . import *
-from .accounts import *
-from .deployments import *
 
 def test_upgrade_to_zero(admin: Account, deploy_flexusd: flexUSD):
   print('Test: Try upgrading to EOA')

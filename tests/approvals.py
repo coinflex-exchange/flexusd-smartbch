@@ -12,15 +12,14 @@
 ### Standard Packages ###
 from decimal import Decimal
 from typing import List
-### Third-Party Packages ###
+### Project Contracts ###
 from brownie import flexUSDImplV0
+### Third-Party Packages ###
 from brownie.convert import Wei
 from brownie.exceptions import VirtualMachineError
 from eth_account import Account
 ### Local Modules ###
-from . import BLUE, NFMT
-from .accounts import *
-from .deployments import *
+from . import *
 
 def test_approve_small_amount(admin: Account, user_accounts: List[Account], wrap_flexusd_v0: flexUSDImplV0):
   print(f'{ BLUE }Approval Test #1: Admin Approves User #1 small amount.{ NFMT }')

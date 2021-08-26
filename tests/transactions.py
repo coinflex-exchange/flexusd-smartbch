@@ -12,15 +12,14 @@
 ### Standard Packages ###
 from decimal import Decimal
 from typing import List
+### Project Contracts ###
+from brownie import flexUSDImplV0
 ### Third-Party Packages ###
-from brownie import flexUSD, flexUSDImplV0
 from brownie.exceptions import VirtualMachineError
 from brownie.network.account import Account
 from brownie.network.transaction import TransactionReceipt
 ### Local Modules ###
 from . import *
-from .accounts import *
-from .deployments import *
 
 def test_transfer_to_users(admin: Account, user_accounts: List[Account], wrap_flexusd_v0: flexUSDImplV0):
   print(f'{ BLUE }Trasaction Test #1: Distribute 100 each to user accounts.{ NFMT }')
