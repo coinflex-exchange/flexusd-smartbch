@@ -165,6 +165,24 @@ contract flexUSDImplV0 is Context, flexUSDStorage, LibraryLock, IERC20
     emit Transfer(sender, recipient, externalAmt);
   }
 
+  function _approve(address owner, address spender, uint256 externalAmt)
+    internal virtual
+  {
+    require(owner != address(0), 'ERC20: approve from the zero address');
+    require(spender != address(0), 'ERC20: approve to the zero address');
+    uint256 internalAmt = externalAmt.mul(deci).div(multiplier);
+    uint256 maxapproval = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+    maxapproval = maxapproval.div(multiplier).mul(deci);
+    if (internalAmt > maxapproval)
+    {
+      internalAmt = maxapproval;
+    }
+    _allowances[owner][spender] = internalAmt;
+    emit Approval(owner, spender, externalAmt);
+  }
+
+  // mintable & burnable
+
   function mint(address mintTo, uint256 amount)
     public virtual onlyOwner isPaused returns (bool)
   {
@@ -204,21 +222,7 @@ contract flexUSDImplV0 is Context, flexUSDStorage, LibraryLock, IERC20
     emit Transfer(account, address(0), externalAmt);
   }
 
-  function _approve(address owner, address spender, uint256 externalAmt)
-    internal virtual
-  {
-    require(owner != address(0), 'ERC20: approve from the zero address');
-    require(spender != address(0), 'ERC20: approve to the zero address');
-    uint256 internalAmt = externalAmt.mul(deci).div(multiplier);
-    uint256 maxapproval = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
-    maxapproval = maxapproval.div(multiplier).mul(deci);
-    if (internalAmt > maxapproval)
-    {
-      internalAmt = maxapproval;
-    }
-    _allowances[owner][spender] = internalAmt;
-    emit Approval(owner, spender, externalAmt);
-  }
+  // pause unpause
 
   function pause()
     external onlyOwner
@@ -231,8 +235,6 @@ contract flexUSDImplV0 is Context, flexUSDStorage, LibraryLock, IERC20
   {
     getpause = false;
   }
-
-  // pause unpause
 
   modifier isPaused()
   {
