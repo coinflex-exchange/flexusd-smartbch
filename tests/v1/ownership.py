@@ -1,9 +1,9 @@
 #!/usr/bin/env python3.7
 # coding:utf-8
 # Copyright (C) 2019-2021 All rights reserved.
-# FILENAME:  tests/v0/ownership.py
+# FILENAME:  tests/v1/ownership.py
 # VERSION: 	 1.0
-# CREATED: 	 2021-08-26 11:16
+# CREATED: 	 2021-09-27 14:25
 # AUTHOR: 	 Aekasitt Guruvanich <sitt@coinflex.com>
 # DESCRIPTION:
 #
@@ -13,7 +13,7 @@
 from decimal import Decimal
 from typing import List
 ### Project Contracts ###
-from brownie import flexUSD, flexUSDImplV0
+from brownie import flexUSD, flexUSDImplV1
 ### Third-Party Packages ###
 from brownie.convert import Wei
 from brownie.exceptions import VirtualMachineError
@@ -26,7 +26,7 @@ from . import ( deploy_impl, deploy_flexusd, wrap_flexusd )
 BLUE: str  = '\033[1;34m'
 NFMT: str  = '\033[0;0m'
 
-def test_mint(admin: Account, wrap_flexusd: flexUSDImplV0):
+def test_mint(admin: Account, wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Ownership Test #1: Minting test.{ NFMT }')
   amount: int           = 100
   amount_wei: Decimal   = Wei(f'{amount} ether').to('wei')
@@ -38,7 +38,7 @@ def test_mint(admin: Account, wrap_flexusd: flexUSDImplV0):
   assert total_supply + amount_wei == ts_postmint
   print(f'Total Supply (Post-Mint): { ts_postmint })')
 
-def test_burn(admin: Account, wrap_flexusd: flexUSDImplV0):
+def test_burn(admin: Account, wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Ownership Test #2: Burning test.{ NFMT }')
   amount: int           = 100
   amount_wei: Decimal   = Wei(f'{amount} ether').to('wei')
@@ -50,7 +50,7 @@ def test_burn(admin: Account, wrap_flexusd: flexUSDImplV0):
   assert total_supply - amount_wei == ts_postburn
   print(f'Total Supply (Post-Burn): { ts_postburn })')
 
-def test_pause(admin: Account, wrap_flexusd: flexUSDImplV0):
+def test_pause(admin: Account, wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Ownership Test #3: Pausing test.{ NFMT }')
   flex_usd: flexUSD     = wrap_flexusd
   flex_usd.pause({ 'from': admin })
@@ -64,7 +64,7 @@ def test_pause(admin: Account, wrap_flexusd: flexUSDImplV0):
   assert revert     == True
   assert revert_msg == 'VM Exception while processing transaction: revert the contract is paused'
 
-def test_failed_mint(user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
+def test_failed_mint(user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Ownership Test #4: Failed Minting test.{ NFMT }')
   amount: int           = 100
   amount_wei: Decimal   = Wei(f'{amount} ether').to('wei')
@@ -84,7 +84,7 @@ def test_failed_mint(user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
   assert total_supply == ts_unchanged
   print(f'Total Supply (Unchanged): { ts_unchanged })')
 
-def test_failed_burn(user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
+def test_failed_burn(user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Ownership Test #5: Failed Burning test.{ NFMT }')
   amount: int           = 100
   amount_wei: Decimal   = Wei(f'{amount} ether').to('wei')
@@ -104,7 +104,7 @@ def test_failed_burn(user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
   assert total_supply == ts_unchanged
   print(f'Total Supply (Unchanged): { ts_unchanged })')
 
-def test_failed_pause(user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
+def test_failed_pause(user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Ownership Test #6: Failed Pausing test.{ NFMT }')
   flex_usd: flexUSD     = wrap_flexusd
   revert: bool          = True
@@ -117,7 +117,7 @@ def test_failed_pause(user_accounts: List[Account], wrap_flexusd: flexUSDImplV0)
   assert revert     == True
   assert revert_msg == 'VM Exception while processing transaction: revert Ownable: caller is not the owner'
 
-def test_transfer_ownership(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
+def test_transfer_ownership(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Ownership Test #7: Transfer Ownership test.{ NFMT }')
   flex_usd: flexUSD       = wrap_flexusd
   ### Transfer Ownership Away ###
@@ -136,7 +136,7 @@ def test_transfer_ownership(admin: Account, user_accounts: List[Account], wrap_f
   assert revert     == True
   assert revert_msg == 'VM Exception while processing transaction: revert Ownable: caller is not the owner'
 
-def test_transfer_ownership_failed(user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
+def test_transfer_ownership_failed(user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Ownership Test #8: Transfer Ownership test from non-admin.{ NFMT }')
   flex_usd: flexUSD = wrap_flexusd
   revert: bool      = True
@@ -149,7 +149,7 @@ def test_transfer_ownership_failed(user_accounts: List[Account], wrap_flexusd: f
   assert revert     == True
   assert revert_msg == 'VM Exception while processing transaction: revert Ownable: caller is not the owner'
 
-def test_transfer_ownership_then_failed_mint(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
+def test_transfer_ownership_then_failed_mint(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Ownership Test #9: Transfer Ownership test and then failed Minting.{ NFMT }')
   flex_usd: flexUSD       = wrap_flexusd
   ### Transfer Ownership Away ###
@@ -176,7 +176,7 @@ def test_transfer_ownership_then_failed_mint(admin: Account, user_accounts: List
   assert total_supply == ts_unchanged
   print(f'Total Supply (Unchanged): { ts_unchanged })')
 
-def test_transfer_ownership_then_failed_burn(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
+def test_transfer_ownership_then_failed_burn(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Ownership Test #10: Transfer Ownership test and then failed Burning.{ NFMT }')
   flex_usd: flexUSD       = wrap_flexusd
   ### Transfer Ownership Away ###
@@ -203,7 +203,7 @@ def test_transfer_ownership_then_failed_burn(admin: Account, user_accounts: List
   assert total_supply == ts_unchanged
   print(f'Total Supply (Unchanged): { ts_unchanged })')
 
-def test_transfer_ownership_then_failed_pause(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
+def test_transfer_ownership_then_failed_pause(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Ownership Test #11: Transfer Ownership test and then failed Pausing.{ NFMT }')
   flex_usd: flexUSD       = wrap_flexusd
   ### Transfer Ownership Away ###

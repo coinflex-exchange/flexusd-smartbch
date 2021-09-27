@@ -1,9 +1,9 @@
 #!/usr/bin/env python3.7
 # coding:utf-8
 # Copyright (C) 2019-2021 All rights reserved.
-# FILENAME:  tests/v0/blacklist.py
+# FILENAME:  tests/v1/blacklist.py
 # VERSION: 	 1.0
-# CREATED: 	 2021-08-26 11:16
+# CREATED: 	 2021-09-27 14:25
 # AUTHOR: 	 Aekasitt Guruvanich <sitt@coinflex.com>
 # DESCRIPTION:
 #
@@ -13,7 +13,7 @@
 from decimal import Decimal
 from typing import List
 ### Project Contracts ###
-from brownie import flexUSDImplV0
+from brownie import flexUSDImplV1
 ### Third-Party Packages ###
 from brownie.convert import Wei
 from brownie.exceptions import VirtualMachineError
@@ -26,11 +26,11 @@ from . import ( deploy_impl, deploy_flexusd, wrap_flexusd )
 BLUE: str  = '\033[1;34m'
 NFMT: str  = '\033[0;0m'
 
-def test_transfer_while_blacklisted(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
+def test_transfer_while_blacklisted(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Blacklist Test #1: Transfer amount to account, blacklist it and observe failed transaction due to blacklist.{ NFMT }')
   amount: int             = 100
   amount_wei: Decimal     = Wei(f'{amount} ether').to('wei')
-  flex_usd: flexUSDImplV0 = wrap_flexusd
+  flex_usd: flexUSDImplV1 = wrap_flexusd
   ### First Transfer from Admin ###
   from_addr: str          = admin.address
   to_addr: str            = user_accounts[0].address
@@ -57,11 +57,11 @@ def test_transfer_while_blacklisted(admin: Account, user_accounts: List[Account]
   assert revert_msg                    == 'VM Exception while processing transaction: revert account is blacklisted'
   assert flex_usd.balanceOf(from_addr) == amount_wei # Balance Unchanged
 
-def test_transfer_after_unblacklisted(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
+def test_transfer_after_unblacklisted(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Blacklist Test #2: Transfer amount to account, blacklist and unblacklist then transfer amount back.{ NFMT }')
   amount: int             = 100
   amount_wei: Decimal     = Wei(f'{amount} ether').to('wei')
-  flex_usd: flexUSDImplV0 = wrap_flexusd
+  flex_usd: flexUSDImplV1 = wrap_flexusd
   ### First Transfer from Admin ###
   from_addr: str          = admin.address
   to_addr: str            = user_accounts[0].address

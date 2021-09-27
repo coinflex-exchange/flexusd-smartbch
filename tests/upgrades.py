@@ -12,16 +12,14 @@
 ### Standard Packages ###
 from typing import List
 ### Project Contracts ###
-from brownie import flexUSD, flexUSDImplV0
+from brownie import flexUSD, flexUSDImplV0, flexUSDImplV1
 ### Third-Party Packages ###
 from brownie.network.account import Account
 from brownie.exceptions import VirtualMachineError
 ### Local Modules ###
 from . import *
-from .v0 import (
-  deploy_impl as deploy_impl_v0,
-  deploy_impl_clone
-)
+from .v0 import deploy_impl as deploy_impl, deploy_flexusd # Assume original contract deployed with v0 logic
+from .v1 import deploy_impl as deploy_impl_v1
 
 def test_upgrade_to_zero(admin: Account, deploy_flexusd: flexUSD):
   print('Test: Try upgrading to EOA')
@@ -57,10 +55,10 @@ def test_upgrade_to_eoa(admin: Account, user_accounts: List[Account], deploy_fle
   assert reverted == True
   assert reverted_msg == 'VM Exception while processing transaction: revert flexUSD: new implementation is not a contract'
 
-def test_upgrade_to_same_impl(admin: Account, deploy_flexusd: flexUSD, deploy_impl_v0: flexUSDImplV0):
+def test_upgrade_to_same_impl(admin: Account, deploy_flexusd: flexUSD, deploy_impl: flexUSDImplV0):
   print('Test: Try upgrading to same implementation address')
   ### Prepare Parameters ###
-  target: str = deploy_impl_v0.address
+  target: str = deploy_impl.address
   data: bytes = b''
   ### Upgrade ###
   reverted: bool    = False
@@ -74,10 +72,10 @@ def test_upgrade_to_same_impl(admin: Account, deploy_flexusd: flexUSD, deploy_im
   assert reverted == True
   assert reverted_msg == 'VM Exception while processing transaction: revert flexUSD: new implementation cannot be the same address'
 
-def test_upgrade_from_non_owner(user_accounts: List[Account], deploy_flexusd: flexUSD, deploy_impl_clone: flexUSDImplV0):
+def test_upgrade_from_non_owner(user_accounts: List[Account], deploy_flexusd: flexUSD, deploy_impl_v1: flexUSDImplV1):
   print('Test: Upgrading from a Non-Owner Account')
   ### Prepare Parameters ###
-  target: str = deploy_impl_clone.address
+  target: str = deploy_impl_v1.address
   data: bytes = b''
   ### Upgrade ###
   reverted: bool    = False
@@ -91,10 +89,10 @@ def test_upgrade_from_non_owner(user_accounts: List[Account], deploy_flexusd: fl
   assert reverted == True
   assert reverted_msg == 'VM Exception while processing transaction: revert Ownable: caller is not the owner'
 
-def test_upgrade_successful(admin: Account, deploy_flexusd: flexUSD, deploy_impl_clone: flexUSDImplV0):
+def test_upgrade_successful(admin: Account, deploy_flexusd: flexUSD, deploy_impl_v1: flexUSDImplV1):
   print('Test: Upgrading Successfully')
   ### Prepare Parameters ###
-  target: str = deploy_impl_clone.address
+  target: str = deploy_impl_v1.address
   data: bytes = b''
   ### Upgrade ###
   reverted: bool    = False
