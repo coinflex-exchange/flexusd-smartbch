@@ -16,6 +16,10 @@ from brownie.convert import Wei
 from eth_account import Account
 ### Local Modules ###
 from . import *
+### ANSI Coloring ###
+BLUE: str  = '\033[1;34m'
+GREEN: str = '\033[1;32m'
+NFMT: str  = '\033[0;0m'
 
 def test_show_balances(admin: Account, user_accounts: List[Account]):
   print(f'{ BLUE }Account Test #1: Show accounts and assure Accounts have funds.{ NFMT }')

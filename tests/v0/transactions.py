@@ -15,11 +15,16 @@ from typing import List
 ### Project Contracts ###
 from brownie import flexUSDImplV0
 ### Third-Party Packages ###
+from brownie.convert import Wei
 from brownie.exceptions import VirtualMachineError
 from brownie.network.account import Account
 from brownie.network.transaction import TransactionReceipt
 ### Local Modules ###
-from . import *
+from tests import *
+from . import deploy_impl as deploy_impl_v0 # used by wrap_flexusd_v0
+### ANSI Coloring ###
+BLUE: str  = '\033[1;34m'
+NFMT: str  = '\033[0;0m'
 
 def test_transfer_to_users(admin: Account, user_accounts: List[Account], wrap_flexusd_v0: flexUSDImplV0):
   print(f'{ BLUE }Trasaction Test #1: Distribute 100 each to user accounts.{ NFMT }')

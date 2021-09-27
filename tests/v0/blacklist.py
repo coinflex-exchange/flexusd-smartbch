@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.7
 # coding:utf-8
 # Copyright (C) 2019-2021 All rights reserved.
-# FILENAME:  tests/blacklist.py
+# FILENAME:  tests/v0/blacklist.py
 # VERSION: 	 1.0
 # CREATED: 	 2021-08-26 11:16
 # AUTHOR: 	 Aekasitt Guruvanich <sitt@coinflex.com>
@@ -20,7 +20,11 @@ from brownie.exceptions import VirtualMachineError
 from brownie.network.transaction import TransactionReceipt
 from eth_account import Account
 ### Local Modules ###
-from . import *
+from tests import *
+from . import deploy_impl as deploy_impl_v0 # used by wrap_flexusd_v0
+### ANSI Coloring ###
+BLUE: str  = '\033[1;34m'
+NFMT: str  = '\033[0;0m'
 
 def test_transfer_while_blacklisted(admin: Account, user_accounts: List[Account], wrap_flexusd_v0: flexUSDImplV0):
   print(f'{ BLUE }Blacklist Test #1: Transfer amount to account, blacklist it and observe failed transaction due to blacklist.{ NFMT }')

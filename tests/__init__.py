@@ -22,11 +22,12 @@ from brownie.project.main import get_loaded_projects, Project
 from eth_account import Account
 from pytest import fixture
 from yaml import safe_load
+### Local Modules ###
+from .v0 import deploy_impl as deploy_impl_v0
 
 ### ANSI Coloring ###
 BLUE: str  = '\033[1;34m'
 RED: str   = '\033[1;31m'
-GREEN: str = '\033[1;32m'
 NFMT: str  = '\033[0;0m'
 
 @fixture
@@ -56,32 +57,6 @@ def user_accounts() -> List[Account]:
   return accounts[1:10]
 
 @fixture
-def deploy_impl_v0(admin: Account) -> flexUSDImplV0:
-  '''
-  Deploy and Inititialize Implementation Logic Contract with totalSupply of 0.
-  '''
-  print(f'{ BLUE }Event: flexUSD Implementation Logic V0 Deployment{ NFMT }')
-  ### Deploy ###
-  flex_usd: flexUSDImplV0 = flexUSDImplV0.deploy({'from': admin})
-  total_supply: int       = Wei('0 ether').to('wei')
-  ### Initialize ###
-  flex_usd.initialize(total_supply, {'from': admin})
-  return flex_usd
-
-@fixture
-def deploy_impl_clone(admin: Account) -> flexUSDImplV0:
-  '''
-  Deploy and Initialize Cloned Implementation Logic Contract with totalSupply of 0.
-  '''
-  print(f'{ BLUE }Event: flexUSD Implementation Logic V0 Deployment{ NFMT }')
-  ### Deploy ###
-  flex_usd: flexUSDImplV0 = flexUSDImplV0.deploy({'from': admin})
-  total_supply: int       = Wei('0 ether').to('wei')
-  ### Initialize ###
-  flex_usd.initialize(total_supply, {'from': admin})
-  return flex_usd
-
-@fixture
 def deploy_flexusd(admin: Account, deploy_impl_v0: flexUSDImplV0) -> flexUSD:
   print(f'{ BLUE }Event: flexUSD Deployment{ NFMT }')
   impl_contract: flexUSDImplV0 = deploy_impl_v0
@@ -107,3 +82,8 @@ def wrap_flexusd_v0(admin: Account, deploy_flexusd: flexUSD) -> flexUSDImplV0:
     build: dict      = { 'abi': flexUSDImplV0.abi, 'contractName': 'flexUSDImplV0' }
     flex_impl        = ProjectContract(project, build=build, address=flex_usd.address)
   return flex_impl
+
+__all__ = [
+  'admin', 'user_accounts',
+  'deploy_flexusd', 'wrap_flexusd_v0'
+]

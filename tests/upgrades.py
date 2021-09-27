@@ -18,6 +18,10 @@ from brownie.network.account import Account
 from brownie.exceptions import VirtualMachineError
 ### Local Modules ###
 from . import *
+from .v0 import (
+  deploy_impl as deploy_impl_v0,
+  deploy_impl_clone
+)
 
 def test_upgrade_to_zero(admin: Account, deploy_flexusd: flexUSD):
   print('Test: Try upgrading to EOA')

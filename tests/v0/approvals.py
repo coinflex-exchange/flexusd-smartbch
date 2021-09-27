@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.7
 # coding:utf-8
 # Copyright (C) 2019-2021 All rights reserved.
-# FILENAME:  tests/approvals.py
+# FILENAME:  tests/v0/approvals.py
 # VERSION: 	 1.0
 # CREATED: 	 2021-08-25 12:55
 # AUTHOR: 	 Aekasitt Guruvanich <sitt@coinflex.com>
@@ -19,7 +19,11 @@ from brownie.convert import Wei
 from brownie.exceptions import VirtualMachineError
 from eth_account import Account
 ### Local Modules ###
-from . import *
+from tests import *
+from . import deploy_impl as deploy_impl_v0 # used by wrap_flexusd_v0
+### ANSI Coloring ###
+BLUE: str  = '\033[1;34m'
+NFMT: str  = '\033[0;0m'
 
 def test_approve_small_amount(admin: Account, user_accounts: List[Account], wrap_flexusd_v0: flexUSDImplV0):
   print(f'{ BLUE }Approval Test #1: Admin Approves User #1 small amount.{ NFMT }')

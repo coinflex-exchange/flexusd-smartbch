@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.7
 # coding:utf-8
 # Copyright (C) 2019-2021 All rights reserved.
-# FILENAME:  tests/ownership.py
+# FILENAME:  tests/v0/ownership.py
 # VERSION: 	 1.0
 # CREATED: 	 2021-08-26 11:16
 # AUTHOR: 	 Aekasitt Guruvanich <sitt@coinflex.com>
@@ -13,14 +13,18 @@
 from decimal import Decimal
 from typing import List
 ### Project Contracts ###
-from brownie import flexUSDImplV0
+from brownie import flexUSD, flexUSDImplV0
 ### Third-Party Packages ###
 from brownie.convert import Wei
 from brownie.exceptions import VirtualMachineError
 from brownie.network.transaction import TransactionReceipt
 from eth_account import Account
 ### Local Modules ###
-from . import *
+from tests import *
+from . import deploy_impl as deploy_impl_v0 # used by wrap_flexusd_v0
+### ANSI Coloring ###
+BLUE: str  = '\033[1;34m'
+NFMT: str  = '\033[0;0m'
 
 def test_mint(admin: Account, wrap_flexusd_v0: flexUSDImplV0):
   print(f'{ BLUE }Ownership Test #1: Minting test.{ NFMT }')
