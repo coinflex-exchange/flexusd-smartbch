@@ -16,8 +16,8 @@ from typing import List
 from brownie import flexUSDImplV1
 ### Third-Party Packages ###
 from brownie.convert import Wei
-from brownie.exceptions import VirtualMachineError
 from eth_account import Account
+from pytest import raises
 ### Local Modules ###
 from tests import ( admin, user_accounts )
 from . import ( deploy_impl, deploy_flexusd, wrap_flexusd )
@@ -66,11 +66,10 @@ def test_approve_overflow(admin: Account, user_accounts: List[Account], wrap_fle
   test_account: Account   = user_accounts[0]
   revert: bool            = False
   revert_msg: str
-  try:
+  with raises(OverflowError) as exc_info:
     flex_usd.approve(test_account, amount_wei, {'from': admin})
-  except OverflowError as err:
-    revert = True
-    revert_msg = err.message
-  assert revert == True
-  assert revert_msg == '115792089237316195423570985008687907853269984665640564039457584007913129639936 is outside allowable range for uint256'
+  assert exc_info.match( \
+    "approve '115792089237316195423570985008687907853269984665640564039457584007913129639936' -" \
+      " 115792089237316195423570985008687907853269984665640564039457584007913129639936 is outside allowable range for uint256" \
+    )
   assert flex_usd.allowance(admin, test_account) == 0
