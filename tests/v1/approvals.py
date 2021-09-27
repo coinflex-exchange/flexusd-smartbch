@@ -52,12 +52,12 @@ def test_approve_max(admin: Account, user_accounts: List[Account], wrap_flexusd:
 
 def test_approve_above_max(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Approval Test #4: Admin Approves User #1 above maximum approval of uint256.{ NFMT }')
-  amount_max: Decimal     = Wei('115792089237316195423570985008687907853269984665640564039457 wei')
+  max_uint: Decimal       = Wei('115792089237316195423570985008687907853269984665640564039457584007913129639935 wei')
   amount_wei: Decimal     = Wei('115792089237316195423570985008687907853269984665640564039458 wei')
   flex_usd: flexUSDImplV1 = wrap_flexusd
   test_account: Account   = user_accounts[0]
   flex_usd.approve(test_account, amount_wei, {'from': admin})
-  assert flex_usd.allowance(admin, test_account) == amount_max
+  assert flex_usd.allowance(admin, test_account) == max_uint
 
 def test_approve_overflow(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV1):
   print(f'{ BLUE }Approval Test #5: Admin Approves User #1 above maximum approval of uint256.{ NFMT }')
