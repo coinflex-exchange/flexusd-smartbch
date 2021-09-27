@@ -61,16 +61,16 @@ def test_approve_above_max(admin: Account, user_accounts: List[Account], wrap_fl
 
 def test_approve_overflow(admin: Account, user_accounts: List[Account], wrap_flexusd: flexUSDImplV0):
   print(f'{ BLUE }Approval Test #5: Admin Approves User #1 above maximum approval of uint256.{ NFMT }')
-  amount_wei: Decimal     = Wei('115792089237316195423570985008687907853269984665640564039457584007913129639935 wei')
+  amount_wei: Decimal     = Wei('115792089237316195423570985008687907853269984665640564039457584007913129639936 wei') # max_uint + 1
   flex_usd: flexUSDImplV0 = wrap_flexusd
   test_account: Account   = user_accounts[0]
   revert: bool            = False
   revert_msg: str
   try:
     flex_usd.approve(test_account, amount_wei, {'from': admin})
-  except VirtualMachineError as err:
+  except OverflowError as err:
     revert = True
     revert_msg = err.message
   assert revert == True
-  assert revert_msg == 'VM Exception while processing transaction: revert'
+  assert revert_msg == '115792089237316195423570985008687907853269984665640564039457584007913129639936 is outside allowable range for uint256'
   assert flex_usd.allowance(admin, test_account) == 0
