@@ -21,3 +21,4 @@ build-backend = "poetry.core.masonry.api"
 norecursedirs = [".git", "build", "contracts", "interfaces", "outdated", "reports", "scripts"]
 addopts = "--tb=short -s"
 testpaths = ["tests"]
+python_files = [ "*.py" ]
