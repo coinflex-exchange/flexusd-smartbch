@@ -62,9 +62,7 @@ contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
     notBlacklisted(msg.sender) notBlacklisted(recipient) isPaused
     returns (bool)
   {
-    uint256 internalAmt;
     uint256 externalAmt = amount;
-    internalAmt = (amount.mul(deci)).div(multiplier);
     _transfer(msg.sender, recipient, externalAmt);
     return true;
   }
