@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import './Context.sol';
-import './flexUSDStorage.sol';
+import './FlexUSDStorage.sol';
 import './LibraryLock.sol';
 import './SafeMath.sol';
 import '../interfaces/IERC20.sol';
 
-contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
+contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
 {
   using SafeMath for uint256;
   /**
@@ -240,7 +240,7 @@ contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
 
   modifier isPaused()
   {
-    require(getpause == false, 'the contract is paused');
+    require(!getpause, 'the contract is paused');
     _;
   }
 
