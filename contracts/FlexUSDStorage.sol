@@ -16,10 +16,10 @@ abstract contract FlexUSDStorage is Ownable {
   mapping(address => mapping(address => uint256)) internal _allowances;
   mapping(address => bool) public blacklist;
   uint256 internal _totalSupply;
-  string public constant name   = 'flexUSD';
-  string public constant symbol = 'flexUSD';
+  string public constant NAME   = 'flexUSD';
+  string public constant SYMBOL = 'flexUSD';
   uint256 public multiplier;
-  uint8 public constant decimals = 18;
-  uint256 internal constant deci = 1e18;
+  uint8 public constant DECIMALS = 18;
+  uint256 internal constant DECI = 1e18;
   bool internal getpause;
 }
