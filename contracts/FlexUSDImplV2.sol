@@ -13,7 +13,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   /**
    * Event(s)
    */
-  event fTokenBlacklist(address indexed account, bool blocked);
+  event TokenBlacklist(address indexed account, bool blocked);
   event ChangeMultiplier(uint256 multiplier);
   event CodeUpdated(address indexed newCode);
 
@@ -250,14 +250,14 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
     external onlyOwner
   {
     blacklist[account] = true;
-    emit fTokenBlacklist(account, true);
+    emit TokenBlacklist(account, true);
   }
 
   function removeFromBlacklist(address account)
     external onlyOwner
   {
     blacklist[account] = false;
-    emit fTokenBlacklist(account, false);
+    emit TokenBlacklist(account, false);
   }
 
   modifier notBlacklisted(address account) {
