@@ -21,6 +21,20 @@ contract FlexUSD is FlexUSDStorage {
     _upgradeToAndCall(_logic, _data);
   }
 
+  /**
+   * @dev receive
+   */
+  receive() payable external {
+    _delegate();
+  }
+
+  /** 
+   * @dev fallback
+   */
+  fallback() payable external {
+    _delegate();
+  }
+
   function upgrade(address _logic, bytes memory _data)
     public payable onlyOwner
   {
@@ -50,21 +64,7 @@ contract FlexUSD is FlexUSDStorage {
       Address.functionDelegateCall(_implementation, _data);
     }
   }
-
-  /**
-   * @dev receive
-   */
-  receive() payable external {
-    _delegate();
-  }
-
-  /** 
-   * @dev fallback
-   */
-  fallback() payable external {
-    _delegate();
-  }
-
+  
   /**
    * @dev delegate to implementation logic
    */
