@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import './Context.sol';
-import './flexUSDStorage.sol';
+import './FlexUSDStorage.sol';
 import './LibraryLock.sol';
 import './SafeMath.sol';
 import '../interfaces/IERC20.sol';
 
-contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
+contract flexUSDImplV1 is Context, FlexUSDStorage, LibraryLock, IERC20
 {
   using SafeMath for uint256;
   /**
@@ -22,7 +22,7 @@ contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
   {
     require(!initialized, 'The library has already been initialized.');	
     LibraryLock.initialize();
-    multiplier = 1 * deci;
+    multiplier = 1 * DECI;
     _totalSupply = _totalsupply;
     _balances[msg.sender] = _totalSupply;
   }
@@ -38,14 +38,14 @@ contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
   function totalSupply()
     public override view returns (uint256)
   {
-    return _totalSupply.mul(multiplier).div(deci);
+    return _totalSupply.mul(multiplier).div(DECI);
   }
 
   function setTotalSupply(uint256 inputTotalsupply)
     external onlyOwner
   {
     require(inputTotalsupply > totalSupply(), 'the input total supply is not greater than present total supply');
-    multiplier = (inputTotalsupply.mul(deci)).div(_totalSupply);
+    multiplier = (inputTotalsupply.mul(DECI)).div(_totalSupply);
     emit ChangeMultiplier(multiplier);
   }
 
@@ -53,7 +53,7 @@ contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
     public override view returns (uint256)
   {
     uint256 externalAmt;
-    externalAmt = _balances[account].mul(multiplier).div(deci);
+    externalAmt = _balances[account].mul(multiplier).div(DECI);
     return externalAmt;
   }
 
@@ -72,12 +72,12 @@ contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
   {
     uint256 externalAmt;
     uint256 maxapproval = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
-    maxapproval = maxapproval.div(multiplier).mul(deci);
+    maxapproval = maxapproval.div(multiplier).mul(DECI);
     if (_allowances[owner][spender] >= maxapproval)
     {
       externalAmt = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     } else {
-      externalAmt = (_allowances[owner][spender]).mul(multiplier).div(deci);
+      externalAmt = (_allowances[owner][spender]).mul(multiplier).div(DECI);
     }
     return externalAmt;
   }
@@ -153,7 +153,7 @@ contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
   {
     require(sender != address(0), 'ERC20: transfer from the zero address');
     require(recipient != address(0), 'ERC20: transfer to the zero address');
-    uint256 internalAmt = externalAmt.mul(deci).div(multiplier);
+    uint256 internalAmt = externalAmt.mul(DECI).div(multiplier);
     _balances[sender] = _balances[sender].sub(
       internalAmt, 'ERC20: transfer internalAmt exceeds balance'
     );
@@ -168,10 +168,10 @@ contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
     require(spender != address(0), 'ERC20: approve to the zero address');
     uint256 internalAmt;
     uint256 max_uint = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
-    uint256 maxapproval = max_uint.div(multiplier).mul(deci);
-    if (externalAmt <= max_uint.div(deci))
+    uint256 maxapproval = max_uint.div(multiplier).mul(DECI);
+    if (externalAmt <= max_uint.div(DECI))
     {
-      internalAmt = externalAmt.mul(deci).div(multiplier);
+      internalAmt = externalAmt.mul(DECI).div(multiplier);
       if (internalAmt > maxapproval)
       {
         internalAmt = maxapproval;
@@ -189,7 +189,7 @@ contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
     public virtual onlyOwner isPaused returns (bool)
   {
     uint256 externalAmt = amount;
-    uint256 internalAmt = externalAmt.mul(deci).div(multiplier);
+    uint256 internalAmt = externalAmt.mul(DECI).div(multiplier);
     _mint(mintTo, internalAmt, externalAmt);
     return true;
   }
@@ -208,7 +208,7 @@ contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLock, IERC20
   {
     uint256 internalAmt;
     uint256 externalAmt = amount;
-    internalAmt = externalAmt.mul(deci).div(multiplier);
+    internalAmt = externalAmt.mul(DECI).div(multiplier);
     _burn(burnFrom, internalAmt, externalAmt);
     return true;
   }
