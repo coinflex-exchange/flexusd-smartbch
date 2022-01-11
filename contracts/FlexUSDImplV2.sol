@@ -30,7 +30,10 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   function setMultiplier(uint256 _multiplier)
     external onlyOwner isPaused
   {
-    require(_multiplier > multiplier, 'the multiplier should be greater than previous multiplier');
+    require(
+      _multiplier > multiplier,
+      'the multiplier should be greater than previous multiplier'
+    );
     multiplier = _multiplier;
     emit ChangeMultiplier(multiplier);
   }
@@ -44,7 +47,10 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   function setTotalSupply(uint256 inputTotalsupply)
     external onlyOwner
   {
-    require(inputTotalsupply > totalSupply(), 'the input total supply is not greater than present total supply');
+    require(
+      inputTotalsupply > totalSupply(),
+      'the input total supply is not greater than present total supply'
+    );
     multiplier = (inputTotalsupply.mul(DECI)).div(_totalSupply);
     emit ChangeMultiplier(multiplier);
   }
