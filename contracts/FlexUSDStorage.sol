@@ -20,6 +20,6 @@ abstract contract FlexUSDStorage is Ownable {
   string public constant symbol = 'flexUSD';
   uint256 public multiplier;
   uint8 public constant decimals = 18;
-  uint256 internal constant DECI = 1e18;
+  uint256 internal constant DECI = 1e18; // was deci in V0 and V1, changed to fit
   bool internal getpause;
 }
