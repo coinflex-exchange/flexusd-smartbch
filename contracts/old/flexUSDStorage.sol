@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import './Ownable.sol';
+import './../Ownable.sol';
 
 /**
  * Storage Abstract Contract, do not change
  */
-abstract contract FlexUSDStorage is Ownable {
+abstract contract flexUSDStorage is Ownable {
   /**
    * Member Variable(s)
    */
@@ -20,6 +20,6 @@ abstract contract FlexUSDStorage is Ownable {
   string public constant symbol = 'flexUSD';
   uint256 public multiplier;
   uint8 public constant decimals = 18;
-  uint256 internal constant DECI = 1e18; // variable name was deci in V0 and V1
+  uint256 internal constant deci = 1e18;
   bool internal getpause;
 }

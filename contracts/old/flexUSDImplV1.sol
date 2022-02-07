@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import './Context.sol';
+import '../Context.sol';
 import './flexUSDStorage.sol';
 import './LibraryLock.sol';
-import './SafeMath.sol';
-import '../interfaces/IERC20.sol';
+import './../SafeMath.sol';
+import './../../interfaces/IERC20.sol';
 
-contract flexUSDImplV0 is Context, flexUSDStorage, LibraryLock, IERC20
+contract flexUSDImplV1 is Context, flexUSDStorage, LibraryLockOld, IERC20
 {
   using SafeMath for uint256;
   /**
@@ -21,7 +21,7 @@ contract flexUSDImplV0 is Context, flexUSDStorage, LibraryLock, IERC20
     public
   {
     require(!initialized, 'The library has already been initialized.');	
-    LibraryLock.initialize();
+    LibraryLockOld.initialize();
     multiplier = 1 * deci;
     _totalSupply = _totalsupply;
     _balances[msg.sender] = _totalSupply;
@@ -62,9 +62,7 @@ contract flexUSDImplV0 is Context, flexUSDStorage, LibraryLock, IERC20
     notBlacklisted(msg.sender) notBlacklisted(recipient) isPaused
     returns (bool)
   {
-    uint256 internalAmt;
     uint256 externalAmt = amount;
-    internalAmt = (amount.mul(deci)).div(multiplier);
     _transfer(msg.sender, recipient, externalAmt);
     return true;
   }
@@ -75,7 +73,7 @@ contract flexUSDImplV0 is Context, flexUSDStorage, LibraryLock, IERC20
     uint256 externalAmt;
     uint256 maxapproval = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     maxapproval = maxapproval.div(multiplier).mul(deci);
-    if (_allowances[owner][spender] > maxapproval)
+    if (_allowances[owner][spender] >= maxapproval)
     {
       externalAmt = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     } else {
@@ -89,9 +87,7 @@ contract flexUSDImplV0 is Context, flexUSDStorage, LibraryLock, IERC20
     notBlacklisted(spender) notBlacklisted(msg.sender) isPaused
     returns (bool)
   {
-    uint256 internalAmt;
     uint256 externalAmt = amount;
-    internalAmt = externalAmt.mul(deci).div(multiplier);
     _approve(msg.sender, spender, externalAmt);
     return true;
   }
@@ -170,11 +166,17 @@ contract flexUSDImplV0 is Context, flexUSDStorage, LibraryLock, IERC20
   {
     require(owner != address(0), 'ERC20: approve from the zero address');
     require(spender != address(0), 'ERC20: approve to the zero address');
-    uint256 internalAmt = externalAmt.mul(deci).div(multiplier);
-    uint256 maxapproval = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
-    maxapproval = maxapproval.div(multiplier).mul(deci);
-    if (internalAmt > maxapproval)
+    uint256 internalAmt;
+    uint256 max_uint = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+    uint256 maxapproval = max_uint.div(multiplier).mul(deci);
+    if (externalAmt <= max_uint.div(deci))
     {
+      internalAmt = externalAmt.mul(deci).div(multiplier);
+      if (internalAmt > maxapproval)
+      {
+        internalAmt = maxapproval;
+      }
+    } else {
       internalAmt = maxapproval;
     }
     _allowances[owner][spender] = internalAmt;
