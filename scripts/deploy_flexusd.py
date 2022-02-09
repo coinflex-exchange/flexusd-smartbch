@@ -9,8 +9,9 @@
 #
 # HISTORY:
 #*************************************************************
-from brownie import accounts, network, flexUSD, flexUSDImplV0, Wei
+from brownie import accounts, network, FlexUSD, FlexUSDImplV2, Wei
 from eth_account.account import ValidationError
+from brownie.network.gas.strategies import ExponentialScalingStrategy
 from yaml import safe_load
 
 TERM_RED  = '\033[1;31m'
@@ -25,9 +26,10 @@ def main():
     1: None,              # mainnet
     42: 'kovan',          # kovan testnet
     1337: 'dev',          # local ganache-cli evm
-    10001: 'smartbch-t1a' # smartbch testnet
+    10001: 'smartbch-testnet', # smartbch testnet
+    10000: 'smartbch-mainnet'  # smartbch testnet
   }
-  if chain._chainid in (1, 42, 1337, 10001):
+  if chain._chainid in (1, 42, 1337, 10001,10000):
     chain_name = chain_map[chain._chainid]
     file_name = 'wallet.yml' if chain_name is None else f'wallet.{chain_name}.yml'
     ### Load Mnemonic from YAML File ###
@@ -60,18 +62,11 @@ def main():
   if balance == 0:
     return # If balance is zero, exits
 
-  ### Set Gas Price ##
-  gas_station = {
-    'fast': 0.000000097,
-    'standard': 0.000000085
-  }
-  gas_price = gas_station['standard']
+  gas_strategy = ExponentialScalingStrategy('10 gwei', '50 gwei')
 
   ### Deployments ###
-  limit                  = flexUSDImplV0.deploy.estimate_gas({ 'from': acct }) * gas_price
-  impl_v0: flexUSDImplV0 = flexUSDImplV0.deploy({ 'from': acct, 'gas_limit': limit })
-  print(f'flexUSDImplV0: { impl_v0 }')
+  impl_v2: FlexUSDImplV2 = FlexUSDImplV2.deploy({ 'from': acct, 'gas_price': gas_strategy })
+  print(f'FlexUSDImplV2: { impl_v2 }')
 
-  limit                  = flexUSD.deploy.estimate_gas(impl_v0.address, b'', { 'from': acct }) * gas_price
-  flex_usd: flexUSD      = flexUSD.deploy(impl_v0.address, b'', { 'from': acct, 'gas_limit': limit })
+  flex_usd: FlexUSD      = FlexUSD.deploy(impl_v2.address, b'', { 'from': acct, 'gas_price': gas_strategy })
   print(f'flexUSD: { flex_usd }')

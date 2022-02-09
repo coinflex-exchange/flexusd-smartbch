@@ -9,17 +9,19 @@
 #
 # HISTORY:
 #*************************************************************
-from brownie import accounts, network, flexUSDImplV0, Wei
+from brownie import accounts, network, FlexUSDImplV2, Wei
 from brownie.exceptions import ContractExists
 from brownie.network.contract import ProjectContract
 from brownie.project.main import get_loaded_projects, Project
 from eth_account.account import ValidationError
+from brownie.network.gas.strategies import ExponentialScalingStrategy
 from yaml import safe_load
+
 
 TERM_RED  = '\033[1;31m'
 TERM_NFMT = '\033[0;0m'
 
-def main(target: str, total_supply: int):
+def main(target: str="0xA9bB3b5334347F9a56bebb3f590E8dF97fC091f9", total_supply: int=1000):
   ### Load Account to use ###
   acct = None
   chain = network.Chain()
@@ -28,9 +30,10 @@ def main(target: str, total_supply: int):
     1: None,              # mainnet
     42: 'kovan',          # kovan testnet
     1337: 'dev',          # local ganache-cli evm
-    10001: 'smartbch-t1a' # smartbch testnet
+    10001: 'smartbch-testnet', # smartbch testnet
+    10000: 'smartbch-mainnet', # smartbch mainnet
   }
-  if chain._chainid in (1, 42, 1337, 10001):
+  if chain._chainid in (1, 42, 1337, 10001,10000):
     chain_name = chain_map[chain._chainid]
     file_name = 'wallet.yml' if chain_name is None else f'wallet.{chain_name}.yml'
     ### Load Mnemonic from YAML File ###
@@ -64,22 +67,19 @@ def main(target: str, total_supply: int):
     return # If balance is zero, exits
 
   ### Set Gas Price ##
-  gas_station = {
-    'fast': 0.000000097,
-    'standard': 0.000000085
-  }
-  gas_price = gas_station['standard']
-
+  gas_strategy = ExponentialScalingStrategy('10 gwei', '50 gwei')
+  
   ### Initialize ###
   total_supply_wei = Wei(f'{total_supply} ether').to('wei')
-  flex_impl: flexUSDImplV0
+  flex_impl: FlexUSDImplV2
   try:
-    flex_impl = flexUSDImplV0.at(target)
+    flex_impl = FlexUSDImplV2.at(target)
   except ContractExists:
     project: Project = get_loaded_projects()[0]
-    build: dict      = { 'abi': flexUSDImplV0.abi, 'contractName': 'flexUSDImplV0' }
+    build: dict      = { 'abi': FlexUSDImplV2.abi, 'contractName': 'FlexUSDImplV2' }
     flex_impl        = ProjectContract(project, build=build, address=target)
 
-  limit = flex_impl.initialize.estimate_gas(total_supply_wei, { 'from': acct }) * gas_price
-  txn   = flex_impl.initialize(total_supply_wei, { 'from': acct, 'gas_limit': limit })
+  txn   = flex_impl.initialize(total_supply_wei, { 'from': acct, 'gas_price': gas_strategy})
   print(f'Initialized: { txn }')
+
+
