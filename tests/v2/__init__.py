@@ -58,7 +58,7 @@ def wrap_flexusd(admin: Account, deploy_flexusd: FlexUSD) -> FlexUSDImplV2:
     flex_impl = FlexUSDImplV2.at(flex_usd.address)
   except ContractExists:
     project: Project = get_loaded_projects()[0]
-    build: dict      = { 'abi': FlexUSDImplV2.abi, 'contractName': 'flexUSDImplV2' }
+    build: dict      = { 'abi': FlexUSDImplV2.abi, 'contractName': 'FlexUSDImplV2' }
     flex_impl        = ProjectContract(project, build=build, address=flex_usd.address)
   return flex_impl
 

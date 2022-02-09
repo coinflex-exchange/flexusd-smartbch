@@ -91,9 +91,9 @@ def test_upgrade_from_non_owner(user_accounts: List[Account], deploy_flexusd_v2:
   assert reverted_msg == 'VM Exception while processing transaction: revert Ownable: caller is not the owner'
 
 
-# Assume original contract deployed with v2 logic
-# Since the proxy contract itself was refactored, successful upgrade need to be tested 
-# Original deployment was with v2 logic, upgrade could be tested by ugrading v2 to v1/V0(not ideal path of upgrade, but suffices for the unit test)
+# Assume original contract is deployed with v2 logic
+# Since the proxy contract itself was refactored, successful upgrade needs to be retested 
+# Original deployment was with v2 logic, upgrade could be tested by ugrading v2 to v1/v0(not ideal path of upgrade, but suffices for the unit test)
 
 def test_upgrade_successful_to_v1(admin: Account, deploy_flexusd_v2: FlexUSD, deploy_impl_v1: flexUSDImplV1):
   print('Test: Upgrading Successfully')
