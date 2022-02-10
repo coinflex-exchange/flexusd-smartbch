@@ -26,10 +26,18 @@ def main():
     1: None,              # mainnet
     42: 'kovan',          # kovan testnet
     1337: 'dev',          # local ganache-cli evm
-    10001: 'smartbch-testnet', # smartbch testnet
-    10000: 'smartbch-mainnet'  # smartbch testnet
+    10001:'smartbch-testnet', # smartbch testnet
+    10000:'smartbch-mainnet', # smartbch mainnet
+    97:'bsc-test',            # binance smart chain testnet
+    56:'bsc-main',            # binance smart chain mainnet
+    4002:'ftm-test',          # fantom opera testnet
+    250:'ftm-main',           # fantom opera testnet
+    137:'polygon-mainnet',    # polygon mainnet
+    80001:'polygon-testnet',  # (polygon) mumbai testnet
+    43113:'avalanche-testnet',# avalanche testnet
+    43114:'avalanche-mainnet' # avalanche mainnet
   }
-  if chain._chainid in (1, 42, 1337, 10001,10000):
+  if chain._chainid in (1, 42, 1337, 10001,10000,97,56,4002,250,137,80001,43113,43114):
     chain_name = chain_map[chain._chainid]
     file_name = 'wallet.yml' if chain_name is None else f'wallet.{chain_name}.yml'
     ### Load Mnemonic from YAML File ###

@@ -21,7 +21,7 @@ from yaml import safe_load
 TERM_RED  = '\033[1;31m'
 TERM_NFMT = '\033[0;0m'
 
-def main(target: str="0xA9bB3b5334347F9a56bebb3f590E8dF97fC091f9", total_supply: int=1000):
+def main(target: str, total_supply: int):
   ### Load Account to use ###
   acct = None
   chain = network.Chain()
@@ -30,10 +30,18 @@ def main(target: str="0xA9bB3b5334347F9a56bebb3f590E8dF97fC091f9", total_supply:
     1: None,              # mainnet
     42: 'kovan',          # kovan testnet
     1337: 'dev',          # local ganache-cli evm
-    10001: 'smartbch-testnet', # smartbch testnet
-    10000: 'smartbch-mainnet', # smartbch mainnet
+    10001:'smartbch-testnet', # smartbch testnet
+    10000:'smartbch-mainnet', # smartbch mainnet
+    97:'bsc-test',            # binance smart chain testnet
+    56:'bsc-main',            # binance smart chain mainnet
+    4002:'ftm-test',          # fantom opera testnet
+    250:'ftm-main',           # fantom opera testnet
+    137:'polygon-mainnet',    # polygon mainnet
+    80001:'polygon-testnet',  # (polygon) mumbai testnet
+    43113:'avalanche-testnet',# avalanche testnet
+    43114:'avalanche-mainnet' # avalanche mainnet
   }
-  if chain._chainid in (1, 42, 1337, 10001,10000):
+  if chain._chainid in (1, 42, 1337, 10001,10000,97,56,4002,250,137,80001,43113,43114):
     chain_name = chain_map[chain._chainid]
     file_name = 'wallet.yml' if chain_name is None else f'wallet.{chain_name}.yml'
     ### Load Mnemonic from YAML File ###
