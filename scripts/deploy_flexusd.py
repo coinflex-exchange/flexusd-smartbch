@@ -37,7 +37,7 @@ def main():
     43113:'avalanche-testnet',# avalanche testnet
     43114:'avalanche-mainnet' # avalanche mainnet
   }
-  if chain._chainid in (1, 42, 1337, 10001,10000,97,56,4002,250,137,80001,43113,43114):
+  if chain._chainid in (1, 42, 1337, 10001, 10000, 97, 56, 4002, 250, 137, 80001, 43113, 43114):
     chain_name = chain_map[chain._chainid]
     file_name = 'wallet.yml' if chain_name is None else f'wallet.{chain_name}.yml'
     ### Load Mnemonic from YAML File ###
