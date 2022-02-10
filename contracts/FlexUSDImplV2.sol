@@ -235,18 +235,18 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   function pause()
     external onlyOwner
   {
-    getpause = true;
+    getPause = true;
   }
 
   function unpause()
     external onlyOwner
   {
-    getpause = false;
+    getPause = false;
   }
 
   modifier isPaused()
   {
-    require(!getpause, 'the contract is paused');
+    require(!getPause, 'the contract is paused');
     _;
   }
 

@@ -69,4 +69,4 @@ def main():
   print(f'FlexUSDImplV2: { impl_v2 }')
 
   flex_usd: FlexUSD      = FlexUSD.deploy(impl_v2.address, b'', { 'from': acct, 'gas_price': gas_strategy })
-  print(f'flexUSD: { flex_usd }')
+  print(f'FlexUSD: { flex_usd }')
