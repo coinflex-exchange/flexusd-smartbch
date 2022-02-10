@@ -23,7 +23,7 @@ from .v1 import deploy_impl as deploy_impl_v1
 from .v2 import deploy_impl as deploy_impl, deploy_flexusd as deploy_flexusd_v2 #Assume original contract deployed with v2 logic
 
 def test_upgrade_to_zero(admin: Account, deploy_flexusd_v2: FlexUSD):
-  print('Test: Try upgrading to EOA')
+  print('Test: Try upgrading to Zeoro Address')
   ### Prepare Parameters ###
   target: str = '0x0000000000000000000000000000000000000000'
   data: bytes = b''
