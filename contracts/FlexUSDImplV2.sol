@@ -20,7 +20,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   function initialize(uint256 _totalsupply)
     external
   {
-    require(!initialized, 'The library has already been initialized.');	
+    require(!initialized, "The library has already been initialized.");	
     LibraryLock.initialize();
     multiplier = 1 * DECI;
     _totalSupply = _totalsupply;
@@ -32,7 +32,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   {
     require(
       _multiplier > multiplier,
-      'the multiplier should be greater than previous multiplier'
+      "The multiplier should be greater than previous multiplier."
     );
     multiplier = _multiplier;
     emit ChangeMultiplier(multiplier);
@@ -49,7 +49,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   {
     require(
       inputTotalSupply > totalSupply(),
-      'the input total supply is not greater than present total supply'
+      "The input total supply is not greater than present total supply."
     );
     multiplier = (inputTotalSupply.mul(DECI)).div(_totalSupply);
     emit ChangeMultiplier(multiplier);
@@ -137,7 +137,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
     external notBlacklisted(spender) notBlacklisted(msg.sender) isNotPaused returns (bool)
   {
     uint256 externalAmt = allowance(_msgSender(),spender) ;
-    _approve(_msgSender(), spender, externalAmt.sub(subtractedValue, 'ERC20: decreased allowance below zero'));
+    _approve(_msgSender(), spender, externalAmt.sub(subtractedValue, "ERC20: decreased allowance below zero."));
     return true;
   }
 
@@ -149,7 +149,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
     uint256 externalAmt = allowance(sender,_msgSender());
     _transfer(sender, recipient, amount);
     _approve(sender, _msgSender(),
-      externalAmt.sub(amount, 'ERC20: transfer amount exceeds allowance')
+      externalAmt.sub(amount, "ERC20: transfer amount exceeds allowance.")
     );
     return true;
   }
@@ -157,11 +157,11 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   function _transfer(address sender, address recipient, uint256 externalAmt)
     internal virtual
   {
-    require(sender != address(0), 'ERC20: transfer from the zero address');
-    require(recipient != address(0), 'ERC20: transfer to the zero address');
+    require(sender != address(0), "ERC20: transfer from the zero address.");
+    require(recipient != address(0), "ERC20: transfer to the zero address.");
     uint256 internalAmt = externalAmt.mul(DECI).div(multiplier);
     _balances[sender] = _balances[sender].sub(
-      internalAmt, 'ERC20: transfer internalAmt exceeds balance'
+      internalAmt, "ERC20: transfer internalAmt exceeds balance."
     );
     _balances[recipient] = _balances[recipient].add(internalAmt);
     emit Transfer(sender, recipient, externalAmt);
@@ -170,8 +170,8 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   function _approve(address owner, address spender, uint256 externalAmt)
     internal virtual
   {
-    require(owner != address(0), 'ERC20: approve from the zero address');
-    require(spender != address(0), 'ERC20: approve to the zero address');
+    require(owner != address(0), "ERC20: approve from the zero address.");
+    require(spender != address(0), "ERC20: approve to the zero address.");
     uint256 internalAmt;
     uint256 maxUInt = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     uint256 maxApproval = maxUInt.div(multiplier).mul(DECI);
@@ -203,7 +203,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   function _mint(address account, uint256 internalAmt, uint256 externalAmt)
     internal virtual
   {
-    require(account != address(0), 'ERC20: mint to the zero address');
+    require(account != address(0), "ERC20: mint to the zero address.");
     _totalSupply = _totalSupply.add(internalAmt);
     _balances[account] = _balances[account].add(internalAmt);
     emit Transfer(address(0), account, externalAmt);
@@ -222,9 +222,9 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   function _burn(address account, uint256 internalAmt, uint256 externalAmt)
     internal virtual
   {
-    require(account != address(0), 'ERC20: burn from the zero address');
+    require(account != address(0), "ERC20: burn from the zero address.");
     _balances[account] = _balances[account].sub(
-      internalAmt, 'ERC20: burn internaAmt exceeds balance'
+      internalAmt, "ERC20: burn internaAmt exceeds balance."
     );
     _totalSupply = _totalSupply.sub(internalAmt);
     emit Transfer(account, address(0), externalAmt);
@@ -246,7 +246,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
 
   modifier isNotPaused()
   {
-    require(!getPause, 'the contract is paused');
+    require(!getPause, "The contract is paused.");
     _;
   }
 
@@ -267,7 +267,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   modifier notBlacklisted(address account) {
-    require(!blacklist[account], 'account is blacklisted');
+    require(!blacklist[account], "Account is blacklisted.");
     _;
   }
 }
