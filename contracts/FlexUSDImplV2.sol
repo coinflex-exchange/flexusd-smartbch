@@ -39,7 +39,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   function totalSupply()
-    public override view returns (uint256)
+    public view override  returns (uint256)
   {
     return _totalSupply.mul(multiplier).div(DECI);
   }
@@ -56,7 +56,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   function balanceOf(address account)
-    external override view returns (uint256)
+    external view override  returns (uint256)
   {
     uint256 externalAmt;
     externalAmt = _balances[account].mul(multiplier).div(DECI);
@@ -74,7 +74,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   function allowance(address owner, address spender)
-    public virtual override view returns (uint256)
+    public view virtual override  returns (uint256)
   {
     uint256 externalAmt;
     uint256 maxApproval = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
