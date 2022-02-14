@@ -62,7 +62,7 @@ def test_pause(admin: Account, wrap_flexusd: FlexUSDImplV2):
     revert = True
     revert_msg = err.message
   assert revert     == True
-  assert revert_msg == 'VM Exception while processing transaction: revert the contract is paused'
+  assert revert_msg == 'VM Exception while processing transaction: revert The contract is paused'
 
 def test_failed_mint(user_accounts: List[Account], wrap_flexusd: FlexUSDImplV2):
   print(f'{ BLUE }Ownership Test #4: Failed Minting test.{ NFMT }')
