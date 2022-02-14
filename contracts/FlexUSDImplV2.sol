@@ -28,7 +28,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   function setMultiplier(uint256 _multiplier)
-    external onlyOwner isPaused
+    external onlyOwner isNotPaused
   {
     require(
       _multiplier > multiplier,
@@ -65,7 +65,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
 
   function transfer(address recipient, uint256 amount)
     external virtual override
-    notBlacklisted(msg.sender) notBlacklisted(recipient) isPaused
+    notBlacklisted(msg.sender) notBlacklisted(recipient) isNotPaused
     returns (bool)
   {
     uint256 externalAmt = amount;
@@ -90,7 +90,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
 
   function approve(address spender, uint256 amount)
     external virtual override
-    notBlacklisted(spender) notBlacklisted(msg.sender) isPaused
+    notBlacklisted(spender) notBlacklisted(msg.sender) isNotPaused
     returns (bool)
   {
     uint256 externalAmt = amount;
@@ -111,7 +111,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
    * - `spender` cannot be the zero address.
    */
   function increaseAllowance(address spender, uint256 addedValue) external
-    notBlacklisted(spender) notBlacklisted(msg.sender) isPaused
+    notBlacklisted(spender) notBlacklisted(msg.sender) isNotPaused
     returns (bool) 
   {
     uint256 externalAmt = allowance(_msgSender(),spender);
@@ -134,7 +134,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
    * `subtractedValue`.
    */
   function decreaseAllowance(address spender, uint256 subtractedValue)
-    external notBlacklisted(spender) notBlacklisted(msg.sender) isPaused returns (bool)
+    external notBlacklisted(spender) notBlacklisted(msg.sender) isNotPaused returns (bool)
   {
     uint256 externalAmt = allowance(_msgSender(),spender) ;
     _approve(_msgSender(), spender, externalAmt.sub(subtractedValue, 'ERC20: decreased allowance below zero'));
@@ -143,7 +143,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
 
   function transferFrom(address sender, address recipient, uint256 amount)
     external virtual override
-    notBlacklisted(sender) notBlacklisted(msg.sender) notBlacklisted(recipient) isPaused
+    notBlacklisted(sender) notBlacklisted(msg.sender) notBlacklisted(recipient) isNotPaused
     returns (bool)
   {
     uint256 externalAmt = allowance(sender,_msgSender());
@@ -192,7 +192,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   // mintable & burnable
 
   function mint(address mintTo, uint256 amount)
-    external virtual onlyOwner isPaused returns (bool)
+    external virtual onlyOwner isNotPaused returns (bool)
   {
     uint256 externalAmt = amount;
     uint256 internalAmt = externalAmt.mul(DECI).div(multiplier);
@@ -210,7 +210,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   function burn(address burnFrom, uint256 amount)
-    external virtual onlyOwner isPaused returns (bool)
+    external virtual onlyOwner isNotPaused returns (bool)
   {
     uint256 internalAmt;
     uint256 externalAmt = amount;
@@ -244,7 +244,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
     getPause = false;
   }
 
-  modifier isPaused()
+  modifier isNotPaused()
   {
     require(!getPause, 'the contract is paused');
     _;
