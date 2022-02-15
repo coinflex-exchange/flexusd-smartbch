@@ -7,8 +7,7 @@ import './LibraryLock.sol';
 import './SafeMath.sol';
 import '../interfaces/IERC20.sol';
 
-contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
-{
+contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20 {
   using SafeMath for uint256;
   /**
    * Event(s)
@@ -20,7 +19,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   function initialize(uint256 _totalsupply)
     external
   {
-    require(!initialized, "The library has already been initialized.");	
+    require(!initialized, "The library has already been initialized.");
     LibraryLock.initialize();
     multiplier = 1 * DECI;
     _totalSupply = _totalsupply;
@@ -79,8 +78,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
     uint256 externalAmt;
     uint256 maxApproval = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     maxApproval = maxApproval.div(multiplier).mul(DECI);
-    if (_allowances[owner][spender] >= maxApproval)
-    {
+    if (_allowances[owner][spender] >= maxApproval) {
       externalAmt = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     } else {
       externalAmt = (_allowances[owner][spender]).mul(multiplier).div(DECI);
@@ -114,7 +112,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
     notBlacklisted(spender) notBlacklisted(msg.sender) isNotPaused
     returns (bool) 
   {
-    uint256 externalAmt = allowance(_msgSender(),spender);
+    uint256 externalAmt = allowance(_msgSender(), spender);
     _approve(_msgSender(), spender, externalAmt.add(addedValue));
     return true;
   }
@@ -136,7 +134,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   function decreaseAllowance(address spender, uint256 subtractedValue)
     external notBlacklisted(spender) notBlacklisted(msg.sender) isNotPaused returns (bool)
   {
-    uint256 externalAmt = allowance(_msgSender(),spender) ;
+    uint256 externalAmt = allowance(_msgSender(), spender);
     _approve(_msgSender(), spender, externalAmt.sub(subtractedValue, "ERC20: decreased allowance below zero."));
     return true;
   }
@@ -146,7 +144,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
     notBlacklisted(sender) notBlacklisted(msg.sender) notBlacklisted(recipient) isNotPaused
     returns (bool)
   {
-    uint256 externalAmt = allowance(sender,_msgSender());
+    uint256 externalAmt = allowance(sender, _msgSender());
     _transfer(sender, recipient, amount);
     _approve(sender, _msgSender(),
       externalAmt.sub(amount, "ERC20: transfer amount exceeds allowance.")
@@ -175,8 +173,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
     uint256 internalAmt;
     uint256 maxUInt = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     uint256 maxApproval = maxUInt.div(multiplier).mul(DECI);
-    if (externalAmt <= maxUInt.div(DECI))
-    {
+    if (externalAmt <= maxUInt.div(DECI)) {
       internalAmt = externalAmt.mul(DECI).div(multiplier);
       if (internalAmt > maxApproval)
       {
