@@ -11,8 +11,9 @@
 #*************************************************************
 ### Standard Packages ###
 from typing import List
+from decimal import Decimal
 ### Project Contracts ###
-from brownie import FlexUSD, flexUSDImplV0, flexUSDImplV1,FlexUSDImplV2
+from brownie import FlexUSD, flexUSDImplV0, flexUSDImplV1,FlexUSDImplV2,Contract
 ### Third-Party Packages ###
 from brownie.network.account import Account
 from brownie.exceptions import VirtualMachineError
@@ -100,25 +101,41 @@ def test_upgrade_successful_to_v1(admin: Account, deploy_flexusd_v2: FlexUSD, de
   ### Prepare Parameters ###
   target: str = deploy_impl_v1.address
   data: bytes = b''
+  totalSupply_amount_wei: Decimal
   ### Upgrade ###
   reverted: bool    = False
   flex_usd: FlexUSD = deploy_flexusd_v2
+  flexUSD_abi=Contract.from_abi('FlexUSD',flex_usd.address,FlexUSDImplV2.abi)
+  totalSupply_before_upgrade=flexUSD_abi.totalSupply()
   try:
     flex_usd.upgrade(target, data, {'from': admin})
+    flexUSD_upgraded_abi=Contract.from_abi('FlexUSD',flex_usd.address,deploy_impl_v1.abi)
+    totalSupply_after_upgrade=flexUSD_upgraded_abi.totalSupply()
   except VirtualMachineError as err:
     reverted     = True
   assert reverted == False
+  assert deploy_impl_v1.totalSupply != flexUSD_upgraded_abi.totalSupply() # Storage is not shared, logic is;
+  assert deploy_impl_v1.owner()       == flexUSD_upgraded_abi.owner()       #deployed by the same key
+  assert totalSupply_before_upgrade == totalSupply_after_upgrade
 
 def test_upgrade_successful_to_v0(admin: Account, deploy_flexusd_v2: FlexUSD, deploy_impl_v0: flexUSDImplV0):
   print('Test: Upgrading Successfully')
   ### Prepare Parameters ###
   target: str = deploy_impl_v0.address
   data: bytes = b''
+  totalSupply_amount_wei: Decimal
   ### Upgrade ###
   reverted: bool    = False
   flex_usd: FlexUSD = deploy_flexusd_v2
+  flexUSD_abi=Contract.from_abi('FlexUSD',flex_usd.address,FlexUSDImplV2.abi)
+  totalSupply_before_upgrade=flexUSD_abi.totalSupply()
   try:
     flex_usd.upgrade(target, data, {'from': admin})
+    flexUSD_upgraded_abi=Contract.from_abi('FlexUSD',flex_usd.address,deploy_impl_v0.abi)
+    totalSupply_after_upgrade=flexUSD_upgraded_abi.totalSupply()
   except VirtualMachineError as err:
     reverted     = True
   assert reverted == False
+  assert deploy_impl_v0.totalSupply() != flexUSD_upgraded_abi.totalSupply() # Storage is not shared, logic is;
+  assert deploy_impl_v0.owner()       == flexUSD_upgraded_abi.owner()       #deployed by the same key
+  assert totalSupply_before_upgrade == totalSupply_after_upgrade

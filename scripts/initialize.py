@@ -3,8 +3,8 @@
 # Copyright (C) 2019-2021 All rights reserved.
 # FILENAME:  initialize_flexusd.py
 # VERSION: 	 1.0
-# CREATED: 	 2021-08-19 16:07
-# AUTHOR: 	 Aekasitt Guruvanich <sitt@coinflex.com>
+# CREATED: 	 
+# AUTHOR: 	 
 # DESCRIPTION:
 #
 # HISTORY:
@@ -75,7 +75,7 @@ def main(target: str, total_supply: int):
     return # If balance is zero, exits
 
   ### Set Gas Price ##
-  gas_strategy = ExponentialScalingStrategy('30 gwei', '50 gwei')
+  gas_strategy = ExponentialScalingStrategy('10 gwei', '50 gwei')
   
   ### Initialize ###
   total_supply_wei = Wei(f'{total_supply} ether').to('wei')
