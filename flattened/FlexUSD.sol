@@ -333,7 +333,7 @@ abstract contract FlexUSDStorage is Ownable {
   uint256 public multiplier;
   uint8 public constant decimals = 18;
   uint256 internal constant DECI = 1e18; // variable name was deci in V0 and V1
-  bool internal getpause;
+  bool internal getPause;
 }
 
 // File: FlexUSD.sol

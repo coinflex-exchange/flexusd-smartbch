@@ -425,7 +425,7 @@ abstract contract FlexUSDStorage is Ownable {
   uint256 public multiplier;
   uint8 public constant decimals = 18;
   uint256 internal constant DECI = 1e18; // variable name was deci in V0 and V1
-  bool internal getpause;
+  bool internal getPause;
 }
 
 // Part: LibraryLock
@@ -449,8 +449,7 @@ contract LibraryLock is FlexUSDStorage {
 
 // File: FlexUSDImplV2.sol
 
-contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
-{
+contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20 {
   using SafeMath for uint256;
   /**
    * Event(s)
@@ -460,9 +459,9 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   event CodeUpdated(address indexed newCode);
 
   function initialize(uint256 _totalsupply)
-    public
+    external
   {
-    require(!initialized, 'The library has already been initialized.');	
+    require(!initialized, "The library has already been initialized.");
     LibraryLock.initialize();
     multiplier = 1 * DECI;
     _totalSupply = _totalsupply;
@@ -470,35 +469,44 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   function setMultiplier(uint256 _multiplier)
-    external onlyOwner isPaused
+    external
+    onlyOwner
+    isNotPaused
   {
     require(
       _multiplier > multiplier,
-      'the multiplier should be greater than previous multiplier'
+      "The multiplier should be greater than previous multiplier."
     );
     multiplier = _multiplier;
     emit ChangeMultiplier(multiplier);
   }
 
   function totalSupply()
-    public override view returns (uint256)
+    public
+    view
+    override
+    returns (uint256)
   {
     return _totalSupply.mul(multiplier).div(DECI);
   }
 
-  function setTotalSupply(uint256 inputTotalsupply)
-    external onlyOwner
+  function setTotalSupply(uint256 inputTotalSupply)
+    external
+    onlyOwner
   {
     require(
-      inputTotalsupply > totalSupply(),
-      'the input total supply is not greater than present total supply'
+      inputTotalSupply > totalSupply(),
+      "The input total supply is not greater than present total supply."
     );
-    multiplier = (inputTotalsupply.mul(DECI)).div(_totalSupply);
+    multiplier = (inputTotalSupply.mul(DECI)).div(_totalSupply);
     emit ChangeMultiplier(multiplier);
   }
 
   function balanceOf(address account)
-    public override view returns (uint256)
+    external
+    view
+    override
+    returns (uint256)
   {
     uint256 externalAmt;
     externalAmt = _balances[account].mul(multiplier).div(DECI);
@@ -506,8 +514,12 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   function transfer(address recipient, uint256 amount)
-    public virtual override
-    notBlacklisted(msg.sender) notBlacklisted(recipient) isPaused
+    external
+    virtual
+    override
+    notBlacklisted(msg.sender)
+    notBlacklisted(recipient)
+    isNotPaused
     returns (bool)
   {
     uint256 externalAmt = amount;
@@ -516,14 +528,17 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   function allowance(address owner, address spender)
-    public virtual override view returns (uint256)
+    public
+    view
+    virtual
+    override
+    returns (uint256)
   {
     uint256 externalAmt;
-    uint256 maxapproval = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
-    maxapproval = maxapproval.div(multiplier).mul(DECI);
-    if (_allowances[owner][spender] >= maxapproval)
-    {
-      externalAmt = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+    uint256 maxApproval = type(uint256).max;
+    maxApproval = maxApproval.div(multiplier).mul(DECI);
+    if (_allowances[owner][spender] >= maxApproval) {
+      externalAmt = type(uint256).max;
     } else {
       externalAmt = (_allowances[owner][spender]).mul(multiplier).div(DECI);
     }
@@ -531,8 +546,12 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   function approve(address spender, uint256 amount)
-    public virtual override
-    notBlacklisted(spender) notBlacklisted(msg.sender) isPaused
+    external
+    virtual
+    override
+    notBlacklisted(spender)
+    notBlacklisted(msg.sender)
+    isNotPaused
     returns (bool)
   {
     uint256 externalAmt = amount;
@@ -552,11 +571,14 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
    *
    * - `spender` cannot be the zero address.
    */
-  function increaseAllowance(address spender, uint256 addedValue) public 
-    notBlacklisted(spender) notBlacklisted(msg.sender) isPaused
+  function increaseAllowance(address spender, uint256 addedValue)
+    external
+    notBlacklisted(spender)
+    notBlacklisted(msg.sender)
+    isNotPaused
     returns (bool) 
   {
-    uint256 externalAmt = allowance(_msgSender(),spender);
+    uint256 externalAmt = allowance(_msgSender(), spender);
     _approve(_msgSender(), spender, externalAmt.add(addedValue));
     return true;
   }
@@ -576,56 +598,66 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
    * `subtractedValue`.
    */
   function decreaseAllowance(address spender, uint256 subtractedValue)
-    public notBlacklisted(spender) notBlacklisted(msg.sender) isPaused returns (bool)
+    external
+    notBlacklisted(spender)
+    notBlacklisted(msg.sender)
+    isNotPaused
+    returns (bool)
   {
-    uint256 externalAmt = allowance(_msgSender(),spender) ;
-    _approve(_msgSender(), spender, externalAmt.sub(subtractedValue, 'ERC20: decreased allowance below zero'));
+    uint256 externalAmt = allowance(_msgSender(), spender);
+    _approve(_msgSender(), spender, externalAmt.sub(subtractedValue, "ERC20: decreased allowance below zero."));
     return true;
   }
 
   function transferFrom(address sender, address recipient, uint256 amount)
-    public virtual override
-    notBlacklisted(sender) notBlacklisted(msg.sender) notBlacklisted(recipient) isPaused
+    external
+    virtual
+    override
+    notBlacklisted(sender)
+    notBlacklisted(msg.sender)
+    notBlacklisted(recipient)
+    isNotPaused
     returns (bool)
   {
-    uint256 externalAmt = allowance(sender,_msgSender());
+    uint256 externalAmt = allowance(sender, _msgSender());
     _transfer(sender, recipient, amount);
     _approve(sender, _msgSender(),
-      externalAmt.sub(amount, 'ERC20: transfer amount exceeds allowance')
+      externalAmt.sub(amount, "ERC20: transfer amount exceeds allowance.")
     );
     return true;
   }
 
   function _transfer(address sender, address recipient, uint256 externalAmt)
-    internal virtual
+    internal
+    virtual
   {
-    require(sender != address(0), 'ERC20: transfer from the zero address');
-    require(recipient != address(0), 'ERC20: transfer to the zero address');
+    require(sender != address(0), "ERC20: transfer from the zero address.");
+    require(recipient != address(0), "ERC20: transfer to the zero address.");
     uint256 internalAmt = externalAmt.mul(DECI).div(multiplier);
     _balances[sender] = _balances[sender].sub(
-      internalAmt, 'ERC20: transfer internalAmt exceeds balance'
+      internalAmt, "ERC20: transfer internalAmt exceeds balance."
     );
     _balances[recipient] = _balances[recipient].add(internalAmt);
     emit Transfer(sender, recipient, externalAmt);
   }
 
   function _approve(address owner, address spender, uint256 externalAmt)
-    internal virtual
+    internal
+    virtual
   {
-    require(owner != address(0), 'ERC20: approve from the zero address');
-    require(spender != address(0), 'ERC20: approve to the zero address');
+    require(owner != address(0), "ERC20: approve from the zero address.");
+    require(spender != address(0), "ERC20: approve to the zero address.");
     uint256 internalAmt;
-    uint256 max_uint = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
-    uint256 maxapproval = max_uint.div(multiplier).mul(DECI);
-    if (externalAmt <= max_uint.div(DECI))
-    {
+    uint256 maxUInt = type(uint256).max;
+    uint256 maxApproval = maxUInt.div(multiplier).mul(DECI);
+    if (externalAmt <= maxUInt.div(DECI)) {
       internalAmt = externalAmt.mul(DECI).div(multiplier);
-      if (internalAmt > maxapproval)
+      if (internalAmt > maxApproval)
       {
-        internalAmt = maxapproval;
+        internalAmt = maxApproval;
       }
     } else {
-      internalAmt = maxapproval;
+      internalAmt = maxApproval;
     }
     _allowances[owner][spender] = internalAmt;
     emit Approval(owner, spender, externalAmt);
@@ -634,7 +666,11 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   // mintable & burnable
 
   function mint(address mintTo, uint256 amount)
-    public virtual onlyOwner isPaused returns (bool)
+    external
+    virtual
+    onlyOwner
+    isNotPaused
+    returns (bool)
   {
     uint256 externalAmt = amount;
     uint256 internalAmt = externalAmt.mul(DECI).div(multiplier);
@@ -643,16 +679,21 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   function _mint(address account, uint256 internalAmt, uint256 externalAmt)
-    internal virtual
+    internal
+    virtual
   {
-    require(account != address(0), 'ERC20: mint to the zero address');
+    require(account != address(0), "ERC20: mint to the zero address.");
     _totalSupply = _totalSupply.add(internalAmt);
     _balances[account] = _balances[account].add(internalAmt);
     emit Transfer(address(0), account, externalAmt);
   }
 
   function burn(address burnFrom, uint256 amount)
-    public virtual onlyOwner isPaused returns (bool)
+    external
+    virtual
+    onlyOwner
+    isNotPaused
+    returns (bool)
   {
     uint256 internalAmt;
     uint256 externalAmt = amount;
@@ -662,11 +703,12 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   }
 
   function _burn(address account, uint256 internalAmt, uint256 externalAmt)
-    internal virtual
+    internal
+    virtual
   {
-    require(account != address(0), 'ERC20: burn from the zero address');
+    require(account != address(0), "ERC20: burn from the zero address.");
     _balances[account] = _balances[account].sub(
-      internalAmt, 'ERC20: burn internaAmt exceeds balance'
+      internalAmt, "ERC20: burn internaAmt exceeds balance."
     );
     _totalSupply = _totalSupply.sub(internalAmt);
     emit Transfer(account, address(0), externalAmt);
@@ -675,41 +717,45 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20
   // pause unpause
 
   function pause()
-    external onlyOwner
+    external
+    onlyOwner
   {
-    getpause = true;
+    getPause = true;
   }
 
   function unpause()
-    external onlyOwner
+    external
+    onlyOwner
   {
-    getpause = false;
+    getPause = false;
   }
 
-  modifier isPaused()
+  modifier isNotPaused()
   {
-    require(!getpause, 'the contract is paused');
+    require(!getPause, "The contract is paused.");
     _;
   }
 
   // blacklisting account
 
   function addToBlacklist(address account)
-    external onlyOwner
+    external
+    onlyOwner
   {
     blacklist[account] = true;
     emit TokenBlacklist(account, true);
   }
 
   function removeFromBlacklist(address account)
-    external onlyOwner
+    external
+    onlyOwner
   {
     blacklist[account] = false;
     emit TokenBlacklist(account, false);
   }
 
   modifier notBlacklisted(address account) {
-    require(!blacklist[account], 'account is blacklisted');
+    require(!blacklist[account], "Account is blacklisted.");
     _;
   }
 }
