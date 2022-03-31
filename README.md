@@ -77,3 +77,11 @@ To publish sourcecode for verification on Chain Explorer, ie. etherscan, you mus
 ```bash
 brownie run flatten
 ```
+
+## Deployed Contracts Addresses 
+
+### Production contracts deployed on SmartBCH Mainnet
+
+- FlexUSD (proxy contract): 0x7b2B3C5308ab5b2a1d9a94d20D35CCDf61e05b72
+
+- FlexUSDImplV2 (logic contract): 0x95a9Ae9323C04407c69ec603b9ffcCa18BAf6b5A
