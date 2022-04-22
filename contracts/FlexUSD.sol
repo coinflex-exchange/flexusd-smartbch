@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
 
+pragma solidity 0.8.4;
+
+
+// File: FlexUSD.sol
 import './Address.sol';
 import './FlexUSDStorage.sol';
 
@@ -15,10 +18,10 @@ contract FlexUSD is FlexUSDStorage {
    */
   event Upgraded(address indexed implementation);
 
-  constructor(address _logic, bytes memory _data)
+  constructor(address _logic)
     payable
   {
-    _upgradeToAndCall(_logic, _data);
+    _upgradeTo(_logic);
   }
 
   /**
@@ -35,10 +38,10 @@ contract FlexUSD is FlexUSDStorage {
     _delegate();
   }
 
-  function upgrade(address _logic, bytes memory _data)
-    public payable onlyOwner
+  function upgrade(address _logic)
+    external payable onlyOwner
   {
-    _upgradeToAndCall(_logic, _data);
+    _upgradeTo(_logic);
   }
 
   /**
@@ -56,15 +59,7 @@ contract FlexUSD is FlexUSDStorage {
     emit Upgraded(_implementation);
   }
 
-  function _upgradeToAndCall(address _logic, bytes memory _data)
-    internal
-  {
-    _upgradeTo(_logic);
-    if (_data.length > 0) {
-      Address.functionDelegateCall(_implementation, _data);
-    }
-  }
-  
+
   /**
    * @dev delegate to implementation logic
    */

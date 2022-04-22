@@ -1,19 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.4;
 
-import './Context.sol';
-import './FlexUSDStorage.sol';
-import './LibraryLock.sol';
-import './SafeMath.sol';
-import '../interfaces/IERC20.sol';
+import '../Context.sol';
+import '../FlexUSDStorage.sol';
+import '../LibraryLock.sol';
+import '../SafeMath.sol';
+import '../../interfaces/IERC20.sol';
 
-contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20 {
+contract FlexUSDImplMock is Context, FlexUSDStorage, LibraryLock, IERC20 {
   using SafeMath for uint256;
   /**
    * Event(s)
    */
   event TokenBlacklist(address indexed account, bool blocked);
   event ChangeMultiplier(uint256 indexed multiplier);
+  event CodeUpdated(address indexed newCode);
   event GetPauseUpdated(bool indexed getPause);
   event Initialized(uint256 totalSupply, uint256 DECI, bool initialized);
 
@@ -321,7 +322,7 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20 {
     pure
     returns(string memory)
   {
-    return "2.0";
+    return "mock";
   }
 
   modifier notBlacklisted(address account) {
