@@ -40,9 +40,7 @@ def deploy_flexusd(admin: Account, deploy_impl: FlexUSDImplV2) -> FlexUSD:
   print(f'{ BLUE }Event: flexUSD Deployment{ NFMT }')
   impl_contract: FlexUSDImplV2 = deploy_impl
   ### Deploy ###
-  total_supply: int            = 1000000
-  init_bytes: bytes            = impl_contract.initialize.encode_input(Wei(f'{total_supply} ether').to('wei'))
-  flex_usd: FlexUSD            = FlexUSD.deploy(impl_contract, init_bytes, {'from': admin})
+  flex_usd: FlexUSD            = FlexUSD.deploy(impl_contract, {'from': admin})
   return flex_usd
 
 @fixture
@@ -60,6 +58,9 @@ def wrap_flexusd(admin: Account, deploy_flexusd: FlexUSD) -> FlexUSDImplV2:
     project: Project = get_loaded_projects()[0]
     build: dict      = { 'abi': FlexUSDImplV2.abi, 'contractName': 'FlexUSDImplV2' }
     flex_impl        = ProjectContract(project, build=build, address=flex_usd.address)
+  
+  total_supply: int            = 1000000
+  flex_impl.initialize(Wei(f'{total_supply} ether'), {'from': admin})
   return flex_impl
 
 
