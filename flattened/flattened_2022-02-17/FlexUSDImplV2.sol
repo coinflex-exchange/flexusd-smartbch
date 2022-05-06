@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.11;
 
 
 
@@ -455,9 +455,8 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20 {
    * Event(s)
    */
   event TokenBlacklist(address indexed account, bool blocked);
-  event ChangeMultiplier(uint256 indexed multiplier);
-  event GetPauseUpdated(bool indexed getPause);
-  event Initialized(uint256 totalSupply, uint256 DECI, bool initialized);
+  event ChangeMultiplier(uint256 multiplier);
+  event CodeUpdated(address indexed newCode);
 
   function initialize(uint256 _totalsupply)
     external
@@ -467,7 +466,6 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20 {
     multiplier = 1 * DECI;
     _totalSupply = _totalsupply;
     _balances[msg.sender] = _totalSupply;
-    emit Initialized(_totalSupply, DECI, initialized);
   }
 
   function setMultiplier(uint256 _multiplier)
@@ -723,7 +721,6 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20 {
     onlyOwner
   {
     getPause = true;
-    emit GetPauseUpdated(getPause);
   }
 
   function unpause()
@@ -731,7 +728,6 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20 {
     onlyOwner
   {
     getPause = false;
-    emit GetPauseUpdated(getPause);
   }
 
   modifier isNotPaused()
@@ -756,14 +752,6 @@ contract FlexUSDImplV2 is Context, FlexUSDStorage, LibraryLock, IERC20 {
   {
     blacklist[account] = false;
     emit TokenBlacklist(account, false);
-  }
-
-  function getVersion()
-    external
-    pure
-    returns(string memory)
-  {
-    return "2.0";
   }
 
   modifier notBlacklisted(address account) {
